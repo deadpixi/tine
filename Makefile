@@ -9,7 +9,7 @@ all: tine
 clean:
 	rm -rf *.o tine
 
-tine: buffer.o command.o editor.o mode.c parser.c tine.c util.c
+tine: buffer.o command.o editor.o mode.o parser.o util.o
 
 install: all
 	mkdir -p "$(DESTDIR)/bin" "$(DESTDIR)/share/man/man1"
