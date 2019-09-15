@@ -1,5 +1,5 @@
 STANDARDS := -D_POSIX_C_SOURCE=200908L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED
-CFLAGS    := $(STANDARDS) -Wall -Wextra -Wno-unused-parameter -Os
+CFLAGS    := $(STANDARDS) -Os
 LDFLAGS   := -lncursesw
 DESTDIR   ?= /usr/local
 
