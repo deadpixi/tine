@@ -6,6 +6,7 @@
 .Nd a simple text editor
 .Sh SYNOPSIS
 .Nm
+.Op Fl n
 .Ar
 .Sh DESCRIPTION
 .Nm
@@ -152,6 +153,12 @@ of the filename
 is also executed if it exists.
 If the named file has no extension,
 the whole filename is treated as the extension.
+.Pp
+Calling
+.Nm
+with the
+.Fl n
+flag suppresses the automatic exection of these files.
 .Ss "The Block"
 Some contiguous sequence of lines in the file can be specicially marked;
 these lines are referred to as
@@ -657,3 +664,4 @@ There is no support for file locking and nothing prevents two instances of
 from modifying the same file concurrently.
 .Pp
 History browsing in the extended command line is a little nonintuitive.
+e.

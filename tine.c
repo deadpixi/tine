@@ -146,18 +146,33 @@ main(int argc, char **argv)
 {
     setlocale(LC_ALL, "");
 
-    if (argc < 2)
+    int o = 0;
+    bool runrc = true;
+    while ((o = getopt(argc, argv, "n") != -1)){
+       switch (o){
+          case 'n':
+            runrc = false;
+            break;
+          default:
+            quit("usage: tine FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+            break;
+       }
+    }
+    argc -= optind;
+    argv += optind;
+
+    if (argc < 1)
         quit("usage: tine FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
 
     initializescreen();
     if ((editor = openeditor(argv[1], stdscr, cmdwin)) == NULL)
         return fputs("out of memory", stderr), EXIT_FAILURE;
-    if (loadfile(argv[1]))
+    if (loadfile(argv[0]) && runrc)
        runstartupfiles(argv[1]);
     enableundo(editor->docview.b);
     editor->docview.b->dirty = false;
 
-    for (int i = 2; i < argc; i++){
+    for (int i = 1; i < argc; i++){
         if (argv[i][0] == '+' && isdigit(argv[i][1])){
             ARG a = {.t = ARG_NUMBER, .n1 = (size_t)atol(argv[i] + 1)};
             cmd_m(editor, &editor->docview, &a);
