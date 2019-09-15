@@ -37,10 +37,10 @@ Note that it is possible to interleave line specifications and extended command 
 .Ss "Quirks"
 .Nm
 is an attempt to clone the behavior of a much older editor.
-It often does not work like a more modern text editor;
-its handling of whitespace, tabs, and newlines is often markedly different.
+It often does not work like a more modern text editor:
+in particular, its handling of whitespace, tabs, and newlines is often markedly different.
 If you find yourself surprised by the behavior of the editor,
-consider instead a small walk down memory lane.
+consider it instead a small walk down memory lane.
 .Ss "The Display"
 .Nm
 divides the screen into two areas,
@@ -53,7 +53,7 @@ The file area displays a the contents of the file being edited.
 The file area acts as a
 .Dq window
 onto the file,
-showing a rectangular portion of the it.
+showing a rectangular portion of it.
 When editing the file,
 the file area is updated in real time to display the contents as they change.
 The file on disk is not modified until
@@ -80,7 +80,8 @@ It contains the following fields:
 .It "File="
 The name of the file being edited.
 If there are changes that have not yet been saved,
-this field is preceded with an asterisk.
+this field is prefixed with an asterisk.
+Long filenames will be ellipsized for display.
 .It "Line="
 The line number of the file on which the cursor is positioned.
 .It "Col="
@@ -115,7 +116,7 @@ and
 .Ic ET
 extended commands
 .Pc ","
-this field will be preceded by an asterisk.
+this field will be prefixed with an asterisk.
 .It "Margins="
 This field displays the current margins.
 The first number represents the left margin
@@ -125,8 +126,31 @@ The left margin is 1 if it is not otherwise specified;
 the right margin is displayed as
 .Li "?"
 if not specified.
+The margins can be set via the
+.Ic SL
+and
+.Ic SR
+extended commands,
+and reset to their defaults using the
+.Ic RM
+command.
 .El
+.Pp
 If an error occurs, the contents of the status line are replaced with an error message.
+.Ss "Word Wrap and Margins"
+.Nm
+maintains a left and right margin,
+settable with the
+.Ic SL
+and
+.Ic SR
+commands, respectively.
+New lines will be default start offset to the left margin
+.Pq "though the cursor can be moved to before the left margin if desired"
+and words will wrap at the right margin.
+.Nm
+supports only simple wrapping:
+long words with no spaces that consume the entire width of a line between the margins will not be wrapped.
 .Ss "Startup Files"
 On startup,
 .Nm
@@ -173,6 +197,9 @@ An exception to this is the
 .Ic IB
 command,
 which inserts a copy of the block elsewhere in the file.
+.Pp
+Lines that are part of the block are displayed in reverse video.
+Note that it is not possible to have the block begin or end in the middle of a line.
 .Ss "Immediate Mode"
 When
 .Nm
@@ -263,7 +290,8 @@ extended command.
 has a powerful editing command language.
 Extended mode commands can be entered while editing by pressing
 .Li Escape
-and then entering the command.
+and then entering the command on the command line
+.Pq "which temporarily replaces the status line on the display" "."
 Most of the immediate mode commands above can be used when editing an extended command.
 Pressing
 .Li Enter
@@ -301,12 +329,15 @@ A listing of extended mode commands is available below.
 Each command takes exactly zero or one argument of a given type,
 though some commands provide a useful default if it is not specified.
 Arguments can be strings, numbers, or two strings together.
-Strings can be delimited by generally any non-alphanumeric character except semicolon and parentheses.
+Strings can be delimited by any non-alphanumeric character except semicolon and parentheses.
 .Pp
 Multiple commands can be specified on the same command line by separating them with semicolons.
 Multiple commands can be grouped into one logical command by enclosing them in parentheses.
 .Pp
 Pressing any key while an extended command is running will abort execution.
+.Pp
+Whitespace can be omitted where its absence does not result in any ambiguity.
+This includes whitespace between commands and arguments.
 .Pp
 Below is a list of what extended mode commands are available;
 in their descriptions,
@@ -325,7 +356,7 @@ The final delimiter in a string or strings can be elided at the end of a command
 .Bl -tag -width Ds
 .It "A/s/"
 Inserts a line after the current line containing the string
-.At s "."
+.Ar s "."
 .It "B"
 Moves to the bottom of the file.
 .It "BE"
@@ -333,9 +364,11 @@ Specifies that the block should end at the current line.
 .It "BF/s/"
 Searches backwards through the file for the given string.
 If unspecified, the last string used in a
-.Ic BF
+.Ic BF ","
+.Ic F ","
+.Ic E ","
 or
-.Ic F
+.Ic "EQ"
 command is reused.
 .It "BM n"
 Set bookmark
@@ -366,7 +399,7 @@ Move the cursor right one screen position.
 .It "CS"
 Move the cursor to the start of the line.
 .It "CT"
-Cause the tab key to advance the cursor without inserting any charaters.
+Cause the tab key to advance the cursor without inserting any characters.
 .It "CU"
 Move the cursor up one line without changing its column.
 .It "D"
@@ -412,10 +445,20 @@ will not exchange the given instance.
 Cause the tab key to insert literal tab characters.
 .It "EX"
 Ignore the right-hand margin for this line.
-This effect is canceled if the cursor leaves the current line.
+This effect is canceled when the cursor leaves the current line.
 .It "F/s/"
 Search forwards through the file for string
 .Ar s "."
+If
+.Ar s
+is omitted,
+the last string searched for in a
+.Ic F ","
+.Ic BF ","
+.Ic E ","
+or
+.Ic EQ
+command is used.
 .It "FB/s/"
 Filter block through operating system command
 .Ar s "."
@@ -473,6 +516,7 @@ Move down one page.
 .It "PH n"
 Set the number of lines in a page to
 .Ar n "."
+The default is 12.
 .It "PU"
 Move up one page.
 .It "Q"
@@ -503,7 +547,7 @@ Save the file to the filename
 .Ar s "."
 If
 .Ar s
-is ommitted,
+is omitted,
 the name given to
 .Nm
 at startup is used.
@@ -524,7 +568,7 @@ Set the left margin to column
 .Ar n "."
 If
 .Ar n
-is ommitted, use the current cursor column.
+is omitted, use the current cursor column.
 .It "SM"
 If the cursor is over a bracket character,
 move to the matching bracket character.
@@ -533,7 +577,7 @@ Set the right margin to column
 .Ar n "."
 If
 .Ar n
-is ommitted, use the current cursor column.
+is omitted, use the current cursor column.
 .It "ST n"
 Set the tab distance to
 .Ar n
@@ -624,6 +668,27 @@ text:
 .Bd -literal
    T;RP(EQ/foo/bar/;TY/baz/)
 .Ed
+.Pp
+This command might be useful to place in the
+.Pa "${XDG_CONFIG_HOME}/tine/tinerc.Makefile"
+file to set expanded tab mode automatically when editing makefiles:
+.Bd -literal
+   ET
+.Ed
+.Pp
+This sets the F3 key to preview the file being edited as a man page:
+.Bd -literal
+   SF%3%BM1;T;BS;B;BE;WB"/tmp/mantmp";CB;DO"man -l /tmp/mantmp;rm -f /tmp/mantmp";GM1%
+.Ed
+.Pp
+This uses the bookmark facility to keep track of the current cursor position,
+marks the whole file as a single block,
+writes the block to a temporary file,
+clears the block mark,
+calls the
+.Ic man
+command to display that temporary file,
+and then moves the cursor back to its original position using the bookmark set earlier.
 .Sh HISTORY
 .Nm
 is a modern-day attempt to clone the
@@ -664,4 +729,3 @@ There is no support for file locking and nothing prevents two instances of
 from modifying the same file concurrently.
 .Pp
 History browsing in the extended command line is a little nonintuitive.
-e.
