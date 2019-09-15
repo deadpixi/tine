@@ -58,4 +58,11 @@ However, the following changes are planned:
 - Multi-window editing
 - Simple syntax highlighting
 
+## A Work in Progress
 
+tine is very much a work in progress,
+but it's been stable enough to be my daily driver for a while now.
+
+Please report any bugs you may find, and patches would be happily accepted.
+Note that, for the most part, differences in behavior from AmigaDOS ED are considered bugs,
+so please report any that you may find.
