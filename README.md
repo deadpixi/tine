@@ -57,6 +57,8 @@ However, the following changes are planned:
 - Removal of the ncurses dependency
 - Multi-window editing
 - Simple syntax highlighting
+- Buffer and screen management is fairly simplistic (though, given the expected use cases, perfectly adequate);
+  they will be improved in the future
 
 ## A Work in Progress
 
