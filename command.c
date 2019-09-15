@@ -119,6 +119,41 @@ trimlength(const LINE *l)
    return n;
 }
 
+static bool
+safewrite(int fd, const char *s, size_t n)
+{
+   ssize_t nw = 0;
+   while ((size_t)nw < n){
+      ssize_t w = write(fd, s + nw, n - nw);
+      if (w < 0)
+         return false;
+      nw += w;
+   }
+   return true;
+}
+
+static bool
+writelines(int fd, const BUFFER *b, lineno ls, lineno le)
+{
+   char *s = NULL;
+   bool rc = true;
+   for (lineno l = ls; rc && b->n && l <= le; l++){
+      if (b->l[l].n){
+         s = wstos(b->l[l].s, trimlength(&b->l[l]));
+         if (!s)
+            return false;
+         if (!(rc = safewrite(fd, s, strlen(s)))){
+            free(s);
+            break;
+         }
+         free(s);
+      }
+      safewrite(fd, "\n", strlen("\n"));
+   }
+   close(fd);
+   return true;
+}
+
 /* COMMAND DEFINITIONS */
 enum{
    NOFLAGS      = 0,
@@ -384,41 +419,6 @@ END
 COMMAND(f, MARK | SETSHILITE) /* find forward */
     RETURN((!a->n1 || setfind(e, a->s1, a->n1)) && find(e, v, p, false));
 END
-
-static bool
-safewrite(int fd, const char *s, size_t n)
-{
-   ssize_t nw = 0;
-   while ((size_t)nw < n){
-      ssize_t w = write(fd, s + nw, n - nw);
-      if (w < 0)
-         return false;
-      nw += w;
-   }
-   return true;
-}
-
-static bool
-writelines(int fd, BUFFER *b, lineno ls, lineno le)
-{
-   char *s = NULL;
-   bool rc = true;
-   for (lineno l = ls; rc && b->n && l <= le; l++){
-      if (b->l[l].n){
-         s = wstos(b->l[l].s, trimlength(&b->l[l]));
-         if (!s)
-            return false;
-         if (!(rc = safewrite(fd, s, strlen(s)))){
-            free(s);
-            break;
-         }
-         free(s);
-      }
-      safewrite(fd, "\n", strlen("\n"));
-   }
-   close(fd);
-   return true;
-}
 
 COMMAND(fb, MARK | NEEDSBLOCK | CLEARSBLOCK) /* filter block through command */
    /* FIXME - we should two two pipes and a select instead of a temp file */
@@ -716,7 +716,7 @@ COMMAND(sa, NOFLAGS) /* save text to file */
     if (!fn)
         ERROR("Out of memory");
 
-    int fd = open(fn, O_WRONLY | O_CREAT, 0644);
+    int fd = open(fn, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (fd < 0){
        free(fn);
        ERROR("Could not open file");
@@ -933,7 +933,7 @@ COMMAND(wb, NOFLAGS) /* write block */
     if (!fn)
         ERROR("Out of memory");
 
-    int fd = open(fn, O_WRONLY | O_CREAT, 0644);
+    int fd = open(fn, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (fd < 0){
         free(fn);
         ERROR("Could not open file");
