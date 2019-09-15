@@ -1,0 +1,15 @@
+add visual-block mode
+Improve screen redisplay efficiency
+eventually, remove the ncurses dependency
+make sure the error messages and prompts match those of ED
+clean up redisplay/statuscb/resize/etc...we have a lot of duplicated code there
+add client-server multi-window support
+add basic syntax highlighting
+we should probably better map some of the added commands
+we should figure out how to better split things between EDITORs and VIEWS
+   - almost everything should be in the VIEW...basicaly everything except bookmarks
+make the highlighting system more generic
+handle SIGPIPE
+make sure if we browse back in history, we keep the cursor at the end
+   - make sure that even if we browse back in history, we start on an empty line
+     next time

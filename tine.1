@@ -1,0 +1,659 @@
+.Dd $Mdocdate$
+.Dt TINE 1
+.Os
+.Sh NAME
+.Nm tine
+.Nd a simple text editor
+.Sh SYNOPSIS
+.Nm
+.Ar
+.Sh DESCRIPTION
+.Nm
+is a full-screen text editor.
+It is modeled after the venerable
+.Em ED
+text editor from the TRIPOS and AmigaOS operating systems.
+.Pp
+.Nm
+requires at least one argument:
+the name of a file to edit.
+This file need not exist when
+.Nm
+starts;
+it will be created when it is saved.
+.Pp
+Subsequent arguments starting with
+.Li "+"
+followed by at least one decimal digit are treated as line numbers:
+.Nm
+will move to the specified line after starting up.
+Other arguments are treated as the names of command files
+.Pq "that is, files containing sequences of extended commands"
+and are executed in order.
+.Pp
+Note that it is possible to interleave line specifications and extended command files.
+.Sh EDITING
+.Ss "Quirks"
+.Nm
+is an attempt to clone the behavior of a much older editor.
+It often does not work like a more modern text editor;
+its handling of whitespace, tabs, and newlines is often markedly different.
+If you find yourself surprised by the behavior of the editor,
+consider instead a small walk down memory lane.
+.Ss "The Display"
+.Nm
+divides the screen into two areas,
+the
+.Em file
+area and the
+.Em "status line" "."
+.Pp
+The file area displays a the contents of the file being edited.
+The file area acts as a
+.Dq window
+onto the file,
+showing a rectangular portion of the it.
+When editing the file,
+the file area is updated in real time to display the contents as they change.
+The file on disk is not modified until
+.Nm
+is told to save the file.
+.Pp
+Note that
+.Nm
+does not constrain the cursor to the text of a line.
+Text can be typed anywhere on a line,
+and
+.Nm
+will automatically insert spaces as appropriate.
+.Pp
+Also note that,
+by default,
+the
+.Em Tab
+key does not insert tab or space characters, but only advances the cursor.
+.Pp
+The status line shows information about the current editing session.
+It contains the following fields:
+.Bl -tag -width Ds
+.It "File="
+The name of the file being edited.
+If there are changes that have not yet been saved,
+this field is preceded with an asterisk.
+.It "Line="
+The line number of the file on which the cursor is positioned.
+.It "Col="
+The column number of the file in which the cursor is positioned.
+.It "Block="
+If no block is defined
+.Po
+see the
+.Ic BS
+and
+.Ic BE
+extended commands
+.Pc ","
+this field will display
+.Li "??" "."
+If the starting line of a block has been defined,
+the first question mark will be replaced by
+.Li "S" "."
+If the ending line of a block has been defined,
+the second question mark will be replaced by
+.Li "E" "."
+.It "Tabs="
+Displays a number indicating how many spaces the tab key will advance the cursor.
+This number can be adjusted using the
+.Ic ST
+extended command.
+If the tab key has been configured to insert tabs rather than move the cursor
+.Po
+see the
+.Ic CT
+and
+.Ic ET
+extended commands
+.Pc ","
+this field will be preceded by an asterisk.
+.It "Margins="
+This field displays the current margins.
+The first number represents the left margin
+.Pq "which always has a value" ","
+and the second number represents the right margin.
+The left margin is 1 if it is not otherwise specified;
+the right margin is displayed as
+.Li "?"
+if not specified.
+.El
+If an error occurs, the contents of the status line are replaced with an error message.
+.Ss "Startup Files"
+On startup,
+.Nm
+will execute the file
+.Pa "${XDG_CONFIG_HOME}/.tine/tinerc"
+if it exists,
+with
+.Ev "${XDG_CONFIG_HOME}"
+defaulting to
+.Pa "${HOME}/.config" "."
+If that file does not exist,
+the directories named in
+.Ev "${XDG_CONFIG_DIRS}"
+are inspected similarly.
+.Pp
+A file of the form
+.Pa ".tinerc.EXT" ","
+where
+.Em EXT
+is the
+.Dq "extension"
+of the filename
+.Pq "the part after the last '.' character"
+is also executed if it exists.
+If the named file has no extension,
+the whole filename is treated as the extension.
+.Ss "The Block"
+Some contiguous sequence of lines in the file can be specicially marked;
+these lines are referred to as
+.Dq "the block" "."
+The block can be manipulated in various ways,
+and numerous extended commands refer to it in some way.
+Note that the block is  cleared
+.Pq "that is, lines are no longer specially marked"
+when a file is modified in certain ways.
+In general, any command that inserts or deletes a line will clear the block.
+An exception to this is the
+.Ic IB
+command,
+which inserts a copy of the block elsewhere in the file.
+.Ss "Immediate Mode"
+When
+.Nm
+starts,
+it is in
+.Em immediate
+mode.
+In immediate mode,
+as the name implies,
+commands are executed immediately.
+Most of these
+.Dq "commands"
+are simply the normal actions of editing:
+inserting characters by typing them on the keyboard,
+moving the cursor in various directions via the cursor movement keys,
+and so on.
+.Pp
+Some commands,
+however,
+are entered by pressing the control key and one other key simultaneously.
+These commands perform more complicated manipulations on the file being edited.
+.Ss "Immediate Mode Commands"
+The following commands are available in immediate mode:
+.Bl -tag -width Ds
+.It Backspace
+Deletes the character to the left of the cursor.
+.It Insert
+Inserts a new line above the current line.
+.It Home
+Moves to the top of the file.
+.It End
+Moves to the bottom of the file.
+.It Up / Down / Left / Right
+Move one unit in the specified direction.
+.It Shift-Left / Shift-Right
+Move to the start/end of the current line.
+.It Enter
+Insert a new line at the cursor.
+.It Next / Previous Page
+Move up/down one page.
+.It F1 - F10
+Executes the extended command assigned to the given key.
+.It Escape
+Enters extended command mode.
+.It Ctrl-]
+Go to the end of the line or, if there, to the start.
+.It Ctrl-A
+Inserts a line below the current one.
+.It Ctrl-B
+Deletes the current line.
+.It Ctrl-D
+Moves down one page.
+.It Ctrl-E
+Moves to the top screen or, if there, to the bottom.
+.It Ctrl-F
+Flips the case of the character under the cursor.
+.It Ctrl-G
+Repeats the last extended mode command.
+.It Ctrl-L
+Inserts a copy of the last deleted line.
+.It Ctrl-N
+Joins the current and next line.
+.It Ctrl-O
+Deletes the word/spaces immediately following the cursor.
+.It Ctrl-P
+If the cursor is on a bracket, jump to its partner.
+.It Ctrl-R
+Move to the space following the previous word.
+.It Ctrl-T
+Move to the first character of the next word.
+.It Ctrl-U
+Move up one page.
+.It Ctrl-W
+Delete the previous word.
+.It Ctrl-V
+Redraw the screen.
+.It Ctrl-Y
+Delete from the cursor to the end of the current line.
+.El
+.Pp
+Note that any of the sequences above that are prefixed with
+.Em Ctrl
+can be remapped using the
+.Ic MC
+extended command.
+.Sh "Extended Mode Commands"
+.Nm
+has a powerful editing command language.
+Extended mode commands can be entered while editing by pressing
+.Li Escape
+and then entering the command.
+Most of the immediate mode commands above can be used when editing an extended command.
+Pressing
+.Li Enter
+will execute the command line and return to immediate mode,
+while pressing
+.Li Escape
+will execute the command line and remain in extended command mode.
+.Pp
+.Nm
+maintains a history of extended commands executed,
+and this history can be browsed using the up and down arrow keys to move backwards and forwards in history.
+Earlier commands can be edited before executing them.
+.Ss "The Extended Mode Command Language"
+An extended command looks like:
+.Bd -literal -offset indent
+repeat-count command-name argument
+.Ed
+.Pp
+The
+.Li "repeat-count"
+is optional,
+and specifies how many times the following command should be repeated
+.Pq "the default is 1" "."
+A repeat count of
+.Li RP
+means that the command should be repeated until it fails.
+The
+.Li RP
+specification is not case-sensitive.
+.Pp
+The command name is required, and consists of one or two letters.
+Command names are not case-sensitive.
+A listing of extended mode commands is available below.
+.Pp
+Each command takes exactly zero or one argument of a given type,
+though some commands provide a useful default if it is not specified.
+Arguments can be strings, numbers, or two strings together.
+Strings can be delimited by generally any non-alphanumeric character except semicolon and parentheses.
+.Pp
+Multiple commands can be specified on the same command line by separating them with semicolons.
+Multiple commands can be grouped into one logical command by enclosing them in parentheses.
+.Pp
+Pressing any key while an extended command is running will abort execution.
+.Pp
+Below is a list of what extended mode commands are available;
+in their descriptions,
+.Li n
+refers to a numeric argument;
+.Li "/s/"
+to a string argument with
+.Li "/"
+representing the delimiter character;
+and
+.Li "/s/t/"
+representing two strings together with
+.Li "/"
+again representing the delimiter.
+The final delimiter in a string or strings can be elided at the end of a command line.
+.Bl -tag -width Ds
+.It "A/s/"
+Inserts a line after the current line containing the string
+.At s "."
+.It "B"
+Moves to the bottom of the file.
+.It "BE"
+Specifies that the block should end at the current line.
+.It "BF/s/"
+Searches backwards through the file for the given string.
+If unspecified, the last string used in a
+.Ic BF
+or
+.Ic F
+command is reused.
+.It "BM n"
+Set bookmark
+.Ar n
+to the current cursor position.
+.Ar n
+must be between one and ten, inclusive.
+.It "BS"
+Specifies that the block should start at the current line.
+.It "CB"
+Clears the block.
+.It "CD"
+Move the cursor down one line without changing its column.
+.It "CE"
+Move the cursor to the end of the current line.
+.It "CF n"
+Call the extended command bound to function key
+.Ar n "."
+.Ar n
+must be between one and ten, inclusive.
+.It "CJ"
+Move the cursor to the end of the current line;
+if it is already there, move it to the beginning.
+.It "CL"
+Move the cursor left one screen position.
+.It "CR"
+Move the cursor right one screen position.
+.It "CS"
+Move the cursor to the start of the line.
+.It "CT"
+Cause the tab key to advance the cursor without inserting any charaters.
+.It "CU"
+Move the cursor up one line without changing its column.
+.It "D"
+Delete the current line.
+.It "DB"
+Delete the block.
+.It "DC"
+Delete the character under the cursor.
+.It "DF"
+Display the extended commands bound to the function keys.
+.It "DL"
+Delete the character to the left of the cursor.
+.It "DO/s/"
+Temporarily suspend
+.Nm
+and execute
+.Ar s
+as an operating system command.
+.It "DP"
+Delete the word or spaces preceding the cursor.
+.It "DW"
+Delete the word or spaces following the cursor.
+.It "E/s/t/"
+Exchange the next instance of
+.Ar s
+with
+.Ar t "."
+This is generally useful with a repetition count.
+.It "EL"
+Delete to the end of the line.
+.It "EP"
+Move to the beginning of the text on the screen or,
+if already there,
+to the end of the text on the screen.
+.It "EQ"
+Like
+.Ic
+but the user is prompted before each exchange action.
+Replying
+.Li n
+will not exchange the given instance.
+.It "ET"
+Cause the tab key to insert literal tab characters.
+.It "EX"
+Ignore the right-hand margin for this line.
+This effect is canceled if the cursor leaves the current line.
+.It "F/s/"
+Search forwards through the file for string
+.Ar s "."
+.It "FB/s/"
+Filter block through operating system command
+.Ar s "."
+The existing block is passed as the command's standard input,
+and is replaced with the command's standard output.
+.It "FC"
+Flip the case of the character under the cursor,
+and move one position to the right.
+.It "GM n"
+Go to bookmark
+.Ar n "."
+.It "I/s/"
+Insert a line above the current line containing the string
+.Ar s "."
+.It "IB"
+Insert a copy of the block at the current line.
+Unlike most actions that insert lines into the file,
+this does not clear the block.
+.It "IF/s/"
+Insert the contents of file
+.Ar s
+at the current cursor position.
+.It "J"
+Join the current line and the next.
+.It "LC"
+Cause subsequent
+.Ic F ","
+.Ic BF ","
+.Ic E ","
+and
+.Ic "EQ"
+commands to ignore case while searching.
+.It "M n"
+Move to line
+.Ar n "."
+.It "MC/s/t/"
+Cause
+.Nm
+to interpret the pressing of
+.Li Ctrl-s
+as if
+.Li Ctrl-t
+had been pressed.
+In this case,
+.Ar s
+and
+.Ar t
+must be single-character strings.
+.It "N"
+Move to the beginning of the next line.
+.It "P"
+Move to the beginning of the previous line.
+.It "PD"
+Move down one page.
+.It "PH n"
+Set the number of lines in a page to
+.Ar n "."
+.It "PU"
+Move up one page.
+.It "Q"
+Quit without saving.
+If the file has unsaved changes, the user is prompted to confirm.
+.It "QY"
+Quit without saving.
+No prompting is done if there are unsaved changes.
+.It "RD"
+Insert a copy of the last line deleted with the
+.Li "Ctrl-B"
+or
+.Ic "D"
+commands.
+.It "RF/s/"
+Read file
+.Ar "s"
+and execute its contents as a sequence of
+.Nm
+extended commands.
+.It "RM"
+Reset the margins to their defaults
+.Pq "that is, 1 for the left margin and undefined for the right" "."
+.It "S"
+Split the current line at the cursor position.
+.It "SA/s/"
+Save the file to the filename
+.Ar s "."
+If
+.Ar s
+is ommitted,
+the name given to
+.Nm
+at startup is used.
+.It "SB"
+Move the display such that the first line of the block is visible on the screen.
+.It "SF/s/t/"
+Set function key
+.Ar s
+to the extended command
+.Ar t "."
+Note that
+.Ar s
+must be a decimal number between one and ten, inclusive.
+.It "SH"
+Display some information about the current state of the editor.
+.It "SL n"
+Set the left margin to column
+.Ar n "."
+If
+.Ar n
+is ommitted, use the current cursor column.
+.It "SM"
+If the cursor is over a bracket character,
+move to the matching bracket character.
+.It "SR n"
+Set the right margin to column
+.Ar n "."
+If
+.Ar n
+is ommitted, use the current cursor column.
+.It "ST n"
+Set the tab distance to
+.Ar n
+columns.
+This is the number of columns advanced by the tab key when it is not configured to insert literal tabs,
+and the number of spaces literal tabs will take up when displayed on the screen.
+.It "T"
+Move to the top of the file.
+.It "TB"
+Move to the next tabstop or,
+if the tab key is configured to insert literal tabs,
+insert a tab.
+.It "TY/s/"
+Insert the string
+.Ar s
+as if it had been typed at the keyboard.
+.It "U"
+Undo the last file modification.
+.It "UC"
+Cause subsequent
+.Ic F ","
+.Ic BF ","
+.Ic E ","
+and
+.Ic "EQ"
+commands to respect case while searching.
+.It "WB/s/"
+Write the contents of the block to the file
+.Ar s "."
+.It "WN"
+Move to the first character of the next word.
+.It "WP"
+Move to the space following the last character of the previous word.
+.It "X"
+Exit, saving any changes.
+No prompting is performed.
+.It "XQ"
+Exit, prompting to save first if the file has been changed.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width Ds
+.It Ev TERM
+Indciates the terminal type under which
+.Nm
+is running.
+.It Ev ESCDELAY
+This variable specifies the number of milliseconds
+.Nm
+will wait after seeing an escape character for a special character sequence to complete.
+By default, this is 1000
+.Pq "onse second" "."
+.It Ev LC_CTYPE Ev LC_ALL Ev LANG
+These variables are consulted to determine the encoding used for textual data.
+.It Ev HOME Ev XDG_CONFIG_HOME Ev XDG_CONFIG_DIRS
+These variables are consulted to determine paths for startup files.
+.Sh FILES
+.Bl -tag -width Ds
+.It ".../.tine/tinerc"
+This file is automatically executed at startup.
+It is located using the XDG Specification for configuration files.
+.It ".../.tine/.tinerc.EXT"
+This file is automatically executed if the extension of the filename passed at startup matches
+.Li EXT "."
+If the passed filename has no extension, the whole filename is treated as the extension.
+.El
+.Sh EXAMPLES
+The following extended command will mimic the pre-AmigaDOS 2.0 meanings of the
+.Li Ctrl-U
+and
+.Li Ctrl-D
+commands:
+.Bd -literal
+   MC/U/D/;MC/D/U/
+.Ed
+.Pp
+The following extended command will move to the top of the file,
+make searches case-insensitive,
+and then find and exchange each instance of
+.Li foo
+with
+.Li bar ","
+prompting the user before each exchange,
+and then inserting the text
+.Li "baz"
+before the
+.Pq "possibly exchanged"
+text:
+.Bd -literal
+   T;RP(EQ/foo/bar/;TY/baz/)
+.Ed
+.Sh HISTORY
+.Nm
+is a modern-day attempt to clone the
+.Em ED
+display editor from MetaComCo
+.Po
+.Nm
+is a rather feeble attempt at a recursive acronym:
+.Dq "tine Is Not ED"
+.Pc "."
+.Pp
+.Em ED
+was written in the early 1980's as a display editor for the Cambridge TRIPOS operating system.
+TRIPOS later formed the core of AmigaDOS,
+.Em ED
+came along with it.
+.Pp
+.Nm
+shares no code with
+.Em ED ","
+nor does anyone involved with MetaComCo, the University of Cambridge, Amiga, or TRIPOS endorse or have anything to do with this project...
+though the author wishes to extend his heartfelt thanks to each of them for many years of enjoyable hacking.
+.Sh BUGS
+The only language in which output is produced and documentation is provided is English,
+regardless of the user's preferred language.
+.Pp
+While
+.Nm
+handles nonspacing and combining characters reasonably well,
+there is no support for right-to-left or bidirectional text,
+nor is there any support for more complex textual forms that are common in many languages.
+.Pp
+The screen update algorithm is wasteful of resources;
+a much more efficient mechanism should be included.
+.Pp
+There is no support for file locking and nothing prevents two instances of
+.Nm
+from modifying the same file concurrently.
+.Pp
+History browsing in the extended command line is a little nonintuitive.
