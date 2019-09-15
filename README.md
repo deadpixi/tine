@@ -45,8 +45,8 @@ but there are a few differences:
 - Much like versions of ED shipped prior to AmigaDOS 2, tine does not support
   REXX macros
 
-All-in-all, tine functions similarly to ED circa AmigaDOS 2, with some features from
-AmigaDOS 3 and a few additional features. In any case, tine should be familiar and
+All-in-all, tine functions similarly to ED circa AmigaDOS 1.3, with some features from
+AmigaDOS 2 and 3 and a few additional features. In any case, tine should be familiar and
 comfortable to ED users familiar with any version of the editor.
 
 ## The Future
