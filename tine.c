@@ -148,7 +148,7 @@ main(int argc, char **argv)
 
     int o = 0;
     bool runrc = true;
-    while ((o = getopt(argc, argv, "n") != -1)){
+    while ((o = getopt(argc, argv, "n")) != -1){
        switch (o){
           case 'n':
             runrc = false;
