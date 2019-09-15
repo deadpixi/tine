@@ -154,7 +154,7 @@ main(int argc, char **argv)
             runrc = false;
             break;
           default:
-            quit("usage: tine FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+            quit("usage: tine FILE [-n] [CMDFILE|+LINE]...\n", EXIT_FAILURE);
             break;
        }
     }
@@ -162,7 +162,7 @@ main(int argc, char **argv)
     argv += optind;
 
     if (argc < 1)
-        quit("usage: tine FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+        quit("usage: tine FILE [-n] [CMDFILE|+LINE]...\n", EXIT_FAILURE);
 
     initializescreen();
     if ((editor = openeditor(argv[0], stdscr, cmdwin)) == NULL)
