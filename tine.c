@@ -165,10 +165,10 @@ main(int argc, char **argv)
         quit("usage: tine FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
 
     initializescreen();
-    if ((editor = openeditor(argv[1], stdscr, cmdwin)) == NULL)
+    if ((editor = openeditor(argv[0], stdscr, cmdwin)) == NULL)
         return fputs("out of memory", stderr), EXIT_FAILURE;
     if (loadfile(argv[0]) && runrc)
-       runstartupfiles(argv[1]);
+       runstartupfiles(argv[0]);
     enableundo(editor->docview.b);
     editor->docview.b->dirty = false;
 
