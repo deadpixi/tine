@@ -18,11 +18,13 @@ initview(VIEW *v, WINDOW *w, MODE *m, void (*statuscb)(EDITOR *e, VIEW *v))
     v->w = w;
     v->m = m;
     v->bs = v->be = v->rm = NONE;
+    v->gb = pos(NONE, NONE);
     v->lm = 0;
     v->ts = DEFAULT_TS;
     v->ph = DEFAULT_PH;
     v->statuscb = statuscb;
     v->delay = true;
+    clearhilight(v);
     return true;
 }
 
@@ -124,9 +126,11 @@ remap(const EDITOR *e, KEYSTROKE k)
 void
 dispatch(EDITOR *e, VIEW *v, KEYSTROKE i)
 {
+    bool q = v->q && i.o == OK;
     KEYSTROKE k = remap(e, i);
-    ARG a = {.t = ARG_STRING, .n1 = 1, .s1 = &k.c};
-    callback c = lookupkeystroke(v->m, k, &a);
+    ARG a = {.t = ARG_STRING, .n1 = 1, .s1 = q? &i.c : &k.c};
+    v->q = false;
+    callback c = q? cmd_ty : lookupkeystroke(v->m, k, &a);
     if (!c)
         return;
     c(e, v, &a);

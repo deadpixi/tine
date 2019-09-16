@@ -12,12 +12,12 @@
 typedef struct VIEW VIEW;
 struct VIEW{
     BUFFER *b;
-    POS p, tos, hls, hle;
+    POS p, tos, hls, hle, gb;
     WINDOW *w;
     MODE *m;
     lineno bs, be;
     void (*statuscb)(EDITOR *e, VIEW *v);
-    bool ex, uc, delay, et;
+    bool ex, uc, delay, et, q;
     size_t ph, ts, lm, rm;
     wchar_t *dl;
     size_t dln;

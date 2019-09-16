@@ -161,7 +161,8 @@ enum{
    CLEARSBLOCK  = 1L<<1,
    NEEDSLINES   = 1L<<2,
    NEEDSBLOCK   = 1L<<3,
-   SETSHILITE   = 1L<<4
+   SETSHILITE   = 1L<<4,
+   NOLOCATOR    = 1L<<5
 };
 
 #define COMMAND(name, fflags)                                                    \
@@ -190,6 +191,8 @@ enum{
          v->hls = v->hle = pos(NONE, NONE);              \
       if (v->p.l != ol)                                  \
          v->ex = false;                                  \
+      if (!(flags & NOLOCATOR))                          \
+         v->gb = v->p;                                   \
       return rc;                                         \
    }
 
@@ -202,29 +205,29 @@ COMMAND(a, MARK | CLEARSBLOCK) /* insert line after current */
    RETURN(insertline(b, p.l + 1) && inserttext(b, pos(p.l + 1, 0), a->s1, a->n1));
 END
 
-COMMAND(b, MARK | NOFLAGS) /* move to bottom of file */
+COMMAND(b, MARK | NOLOCATOR) /* move to bottom of file */
    v->p = pos(b->n? b->n - 1 : 0, 0);
 END
 
-COMMAND(be, NOFLAGS) /* block end at cursor line */
+COMMAND(be, NOLOCATOR) /* block end at cursor line */
    v->be = p.l;
 END
 
-COMMAND(bf, MARK | SETSHILITE) /* backwards find */
+COMMAND(bf, MARK | SETSHILITE | NOLOCATOR) /* backwards find */
    RETURN((!a->n1 || setfind(e, a->s1, a->n1)) && find(e, v, p, true));
 END
 
-COMMAND(bm, NOFLAGS) /* set bookmark */
+COMMAND(bm, NOLOCATOR) /* set bookmark */
    if (a->n1 == 0 || a->n1 > BM_MAX)
       ERROR("Invalid bookmark");
    e->bm[a->n1 - 1] = p;
 END
 
-COMMAND(bs, NOFLAGS) /* block start and cursor line */
+COMMAND(bs, NOLOCATOR) /* block start at cursor line */
    v->bs = p.l;
 END
 
-COMMAND(cb, NEEDSBLOCK | CLEARSBLOCK) /* clear block */
+COMMAND(cb, NEEDSBLOCK | CLEARSBLOCK | NOLOCATOR) /* clear block */
    /* called for side effect */
 END
 
@@ -238,7 +241,7 @@ COMMAND(ce, NOFLAGS) /* cursor to end of line */
    v->p = pos(p.l, b->n? b->l[p.l].n : 0);
 END
 
-COMMAND(cf, NOFLAGS) /* call a function key */
+COMMAND(cf, NOLOCATOR) /* call a function key */
    if (a->n1 >= FUNC_MAX || !e->funcs[a->n1])
       ERROR("Invalid function number");
    RETURN(runextended(e->funcs[a->n1], wcslen(e->funcs[a->n1]), e));
@@ -261,7 +264,7 @@ COMMAND(cl, NOFLAGS) /* cursor left */
       ERROR("Beginning of line");
 END
 
-COMMAND(cm, NOFLAGS) /* enter command mode */
+COMMAND(cm, NOLOCATOR) /* enter command mode */
     e->focusview = &e->cmdview;
     werase(e->cmdview.w);
     wrefresh(e->cmdview.w);
@@ -280,7 +283,7 @@ COMMAND(cs, NOFLAGS) /* cursor to start of line */
    v->p.c = 0;
 END
 
-COMMAND(ct, NOFLAGS) /* collapse tabs */
+COMMAND(ct, NOLOCATOR) /* collapse tabs */
    v->et = false;
 END
 
@@ -312,7 +315,7 @@ COMMAND(dc, NOFLAGS | NEEDSLINES) /* delete character at cursor */
       RETURN(deletetext(b, p, 1));
 END
 
-COMMAND(df, NOFLAGS) /* display function definitions */
+COMMAND(df, NOLOCATOR) /* display function definitions */
     WINDOW *w = e->docview.w;
     wattron(w, A_BOLD);
     werase(w);
@@ -334,7 +337,7 @@ COMMAND(dl, NOFLAGS) /* delete character to left */
       RETURN(deletetext(b, v->p, 1));
 END
 
-COMMAND(do, NOFLAGS) /* do a shell command */
+COMMAND(do, NOLOCATOR) /* do a shell command */
    if (!a->n1)
       ERROR("Empty command");
    char *s = wstos(a->s1, a->n1);
@@ -380,7 +383,7 @@ COMMAND(dw, MARK) /* delete to end of current word */
    RETURN(r);
 END
 
-COMMAND(e, MARK) /* exchange s/t */
+COMMAND(e, MARK | NOLOCATOR) /* exchange s/t */
    RETURN(exchange(e, v, a, false));
 END
 
@@ -388,7 +391,7 @@ COMMAND(el, MARK) /* delete to EOL */
    RETURN(!haslines || p.c >= b->l[p.l].n || deletetext(b, p, b->l[p.l].n - p.c));
 END
 
-COMMAND(ep, MARK) /* go to beginning or end of page */
+COMMAND(ep, MARK | NOLOCATOR) /* go to beginning or end of page */
    size_t lines, cols;
    if (p.l >= b->n)
       SUCCEED;
@@ -404,19 +407,19 @@ COMMAND(ep, MARK) /* go to beginning or end of page */
        v->p = pos(n, l->n);
 END
 
-COMMAND(eq, MARK) /* exchange with query */
+COMMAND(eq, MARK | NOLOCATOR) /* exchange with query */
    RETURN(exchange(e, v, a, true));
 END
 
-COMMAND(et, NOFLAGS) /* expand tabs */
+COMMAND(et, NOLOCATOR) /* expand tabs */
    v->et = true;
 END
 
-COMMAND(ex, NOFLAGS) /* expand margins */
+COMMAND(ex, NOLOCATOR) /* expand margins */
    v->ex = true;
 END
 
-COMMAND(f, MARK | SETSHILITE) /* find forward */
+COMMAND(f, MARK | SETSHILITE | NOLOCATOR) /* find forward */
     RETURN((!a->n1 || setfind(e, a->s1, a->n1)) && find(e, v, p, false));
 END
 
@@ -486,7 +489,13 @@ COMMAND(fc, NOFLAGS) /* flip case */
    RETURN(r && cmd_cr(e, v, a));
 END
 
-COMMAND(gm, MARK) /* go to mark */
+COMMAND(gb, MARK | NOLOCATOR) /* go back to previous position */
+   if (v->gb.l == NONE || v->gb.l >= b->n)
+      ERROR("No previous position");
+   v->p = v->gb;
+END
+
+COMMAND(gm, MARK | NOLOCATOR) /* go to mark */
    if (a->n1 == 0 || a->n1 > BM_MAX)
       ERROR("Invalid bookmark");
    size_t n = a->n1 - 1;
@@ -550,17 +559,17 @@ COMMAND(j, MARK | CLEARSBLOCK) /* join this line and next */
     RETURN(inserttext(b, pos(p.l, l1->n), l2->s, l2->n) && deleteline(b, p.l + 1));
 END
 
-COMMAND(lc, NOFLAGS) /* case-sensitive searching */
+COMMAND(lc, NOLOCATOR) /* case-sensitive searching */
    v->uc = false;
 END
 
-COMMAND(m, MARK) /* move to line */
+COMMAND(m, MARK | NOLOCATOR) /* move to line */
     if (a->n1 == NONE || a->n1 == 0 || a->n1 - 1 >= b->n || !b->n)
       ERROR("Invalid line");
     v->p.l = a->n1 - 1;
 END
 
-COMMAND(mc, NOFLAGS) /* remap control key */
+COMMAND(mc, NOLOCATOR) /* remap control key */
    if (a->n1 != 1 || a->n2 != 1 || !a->s1 || !a->s2)
       ERROR("Invalid mapping specification");
    wchar_t c1 = towupper(a->s1[0]) & 0x1f;
@@ -582,30 +591,34 @@ COMMAND(p, MARK) /* move to beginning of previous line */
    v->p = pos(p.l - 1, 0);
 END
 
-COMMAND(pd, MARK) /* page down */
+COMMAND(pd, NOLOCATOR | MARK) /* page down */
    if (b->n < v->ph || b->n - v->tos.l <= v->ph || b->n - p.l <= v->ph)
       ERROR("End of file");
    v->tos.l += v->ph;
    v->p.l += v->ph;
 END
 
-COMMAND(ph, NOFLAGS) /* define page height */
+COMMAND(ph, NOLOCATOR) /* define page height */
     if (a->n1 == 0)
       ERROR("Invalid page height");
     v->ph = a->n1;
 END
 
-COMMAND(pu, MARK) /* page up */
+COMMAND(pu, NOLOCATOR | MARK) /* page up */
    if (v->tos.l < v->ph || v->p.l < v->ph)
       ERROR("Top of file");
    v->tos.l -= v->ph;
    v->p.l -= v->ph;
 END
 
-COMMAND(q, NOFLAGS) /* quit without save */
+COMMAND(q, NOLOCATOR) /* quit without save */
     if (e->docview.b->dirty && !prompt(e, "File has changed. Lose changes?"))
         FAIL;
     e->running = false;
+END
+
+COMMAND(qo, NOFLAGS) /* quote next */
+   v->q = true;
 END
 
 COMMAND(qy, NOFLAGS) /* force quit without save */
@@ -638,7 +651,7 @@ cmd_rf_cb(const wchar_t *s, size_t n, void *p)
    return runextended(s, n, (EDITOR *)p);
 }
 
-COMMAND(rf, NOFLAGS) /* run command file */
+COMMAND(rf, NOLOCATOR) /* run command file */
     char *fn = wstos(a->s1, a->n1);
     if (!fn)
       ERROR("Out of memory");
@@ -647,7 +660,7 @@ COMMAND(rf, NOFLAGS) /* run command file */
     RETURN(r);
 END
 
-COMMAND(rm, NOFLAGS) /* reset margins */
+COMMAND(rm, NOLOCATOR) /* reset margins */
     v->rm = NONE;
     v->lm = 0;
 END
@@ -672,18 +685,18 @@ runcommand(EDITOR *e, VIEW *v, const ARG *a, bool stay)
     return rc;
 }
 
-COMMAND(rp, MARK) /* repeat last command */
+COMMAND(rp, MARK | NOLOCATOR) /* repeat last command */
    if (e->lc.l == NONE)
       SUCCEED;
    e->cmdview.p = e->lc;
    RETURN(runcommand(e, &e->cmdview, a, false));
 END
 
-COMMAND(rs, MARK) /* run extended command and stay */
+COMMAND(rs, MARK | NOLOCATOR) /* run extended command and stay */
     RETURN(runcommand(e, v, a, true));
 END
 
-COMMAND(ru, MARK) /* run extended command */
+COMMAND(ru, MARK | NOLOCATOR) /* run extended command */
    RETURN(runcommand(e, v, a, false));
 END
 
@@ -707,7 +720,7 @@ COMMAND(s, MARK | CLEARSBLOCK) /* split line */
         v->tos.l++;
 END
 
-COMMAND(sa, NOFLAGS) /* save text to file */
+COMMAND(sa, NOLOCATOR) /* save text to file */
     char *fn = strdup(e->name);
     if (a->t == ARG_STRING && a->n1){
         free(fn);
@@ -728,7 +741,7 @@ COMMAND(sa, NOFLAGS) /* save text to file */
     RETURN(r);
 END
 
-COMMAND(sb, NOFLAGS | MARK) /* show block on screen */
+COMMAND(sb, NOLOCATOR | MARK) /* show block on screen */
     if (v->bs == NONE)
         ERROR("No block defined");
     v->p.l = v->bs;
@@ -738,7 +751,7 @@ COMMAND(se, CLEARSBLOCK | MARK) /* split line after move to end */
     RETURN(cmd_ce(e, v, a) && cmd_s(e, v, a));
 END
 
-COMMAND(sf, NOFLAGS) /* set function key */
+COMMAND(sf, NOLOCATOR) /* set function key */
     if (!a->n1)
         ERROR("Invalid function number");
 
@@ -751,7 +764,7 @@ COMMAND(sf, NOFLAGS) /* set function key */
         ERROR("Out of memory");
 END
 
-COMMAND(sh, NOFLAGS) /* show information */
+COMMAND(sh, NOLOCATOR) /* show information */
     WINDOW *w = e->docview.w;
     WINDOW *c = e->cmdview.w;
 
@@ -789,7 +802,7 @@ COMMAND(sh, NOFLAGS) /* show information */
     getkeystroke(e, true);
 END
 
-COMMAND(sl, NOFLAGS) /* set left margin */
+COMMAND(sl, NOLOCATOR) /* set left margin */
     if (v->rm != NONE && a->n1 >= v->rm)
         ERROR("Left margin would exceed right margin");
     if (a->n1 >= SIZE_MAX - 1)
@@ -797,7 +810,7 @@ COMMAND(sl, NOFLAGS) /* set left margin */
     v->lm = a->n1 > 0? a->n1 - 1 : p.c;
 END
 
-COMMAND(sm, MARK) /* show matching brace */
+COMMAND(sm, MARK | NOLOCATOR) /* show matching brace */
    wint_t s = charat(b, p), m = 0;
    int c = 1;
    bool r = 0;
@@ -830,7 +843,7 @@ COMMAND(sm, MARK) /* show matching brace */
    ERROR("Search failed");
 END
 
-COMMAND(sr, NOFLAGS) /* set right margin */
+COMMAND(sr, NOLOCATOR) /* set right margin */
     if (v->lm != NONE && a->n1 <= v->lm)
         ERROR("Right margin would exceed left margin");
     if (a->n1 >= SIZE_MAX - 1)
@@ -838,13 +851,13 @@ COMMAND(sr, NOFLAGS) /* set right margin */
     v->rm = a->n1 > 0? a->n1 - 1 : p.c;
 END
 
-COMMAND(st, NOFLAGS) /* set tab distance */
+COMMAND(st, NOLOCATOR) /* set tab distance */
     if (a->n1 == 0 || a->n1 >= SIZE_MAX - 1)
         ERROR("Invalid tab width");
     v->ts = a->n1;
 END
 
-COMMAND(t, MARK) /* move to top of file */
+COMMAND(t, MARK | NOLOCATOR) /* move to top of file */
     v->p = pos(0, 0);
 END
 
@@ -904,15 +917,15 @@ COMMAND(u, CLEARSBLOCK) /* undo */
     v->p = p;
 END
 
-COMMAND(uc, NOFLAGS) /* case-insensitive searching */
+COMMAND(uc, NOLOCATOR) /* case-insensitive searching */
     v->uc = true;
 END
 
-COMMAND(uk, NOFLAGS) /* unknown command */
+COMMAND(uk, NOLOCATOR) /* unknown command */
    ERROR("Unknown command");
 END
 
-COMMAND(vw, NOFLAGS) /* verify window */
+COMMAND(vw, NOLOCATOR) /* verify window */
     redisplay(&e->docview);
     redisplay(&e->cmdview);
     if (v->statuscb)
@@ -921,7 +934,7 @@ COMMAND(vw, NOFLAGS) /* verify window */
     redrawwin(e->cmdview.w);
 END
 
-COMMAND(wb, NOFLAGS) /* write block */
+COMMAND(wb, NOLOCATOR) /* write block */
     if (v->bs == NONE || v->be == NONE)
         ERROR("No block defined");
 
@@ -980,7 +993,7 @@ COMMAND(x, NOFLAGS) /* exit with save */
     RETURN(cmd_sa(e, v, a) && cmd_q(e, v, a));
 END
 
-COMMAND(xq, NOFLAGS) /* exit with save and query */
+COMMAND(xq, NOLOCATOR) /* exit with save and query */
     if (!e->docview.b->dirty)
         RETURN(cmd_q(e, v, a));
     if (prompt(e, "File has been changed - Type Y to save and exit:"))
@@ -1024,6 +1037,7 @@ static CMD cmdtab[] ={
     {L"F",  ARG_STRING,     false, cmd_f},
     {L"FB", ARG_STRING,     true,  cmd_fb},
     {L"FC", ARG_NONE,       false, cmd_fc},
+    {L"GB", ARG_NONE,       true,  cmd_gb},
     {L"GM", ARG_NUMBER,     true,  cmd_gm},
     {L"I",  ARG_STRING,     false, cmd_i},
     {L"IB", ARG_NONE,       true,  cmd_ib},

@@ -34,14 +34,15 @@ static MODE cmdmodetab ={
         {{OK,           L'\t'},            cmd_tb, {0}},
         {{OK,           CTRL(L'[')},       cmd_rs, {0}},
         {{OK,           CTRL(L']')},       cmd_cj, {0}},
-        {{OK,           CTRL(L'T')},       cmd_wn, {0}},
-        {{OK,           CTRL(L'R')},       cmd_wp, {0}},
-        {{OK,           CTRL(L'P')},       cmd_sm, {0}},
-        {{OK,           CTRL(L'V')},       cmd_vw, {0}},
         {{OK,           CTRL(L'F')},       cmd_fc, {0}},
-        {{OK,           CTRL(L'Y')},       cmd_el, {0}},
         {{OK,           CTRL(L'O')},       cmd_dw, {0}},
+        {{OK,           CTRL(L'P')},       cmd_sm, {0}},
+        {{OK,           CTRL(L'Q')},       cmd_qo, {0}},
+        {{OK,           CTRL(L'R')},       cmd_wp, {0}},
+        {{OK,           CTRL(L'T')},       cmd_wn, {0}},
+        {{OK,           CTRL(L'V')},       cmd_vw, {0}},
         {{OK,           CTRL(L'W')},       cmd_dp, {0}},
+        {{OK,           CTRL(L'Y')},       cmd_el, {0}},
         {{KEY_CODE_YES, 0},                NULL,   {0}}
     }
 };
@@ -90,12 +91,14 @@ static MODE docmodetab ={
         {{OK,           CTRL(L'N')},       cmd_j,  {0}},
         {{OK,           CTRL(L'O')},       cmd_dw, {0}},
         {{OK,           CTRL(L'P')},       cmd_sm, {0}},
+        {{OK,           CTRL(L'Q')},       cmd_qo, {0}},
         {{OK,           CTRL(L'R')},       cmd_wp, {0}},
         {{OK,           CTRL(L'T')},       cmd_wn, {0}},
         {{OK,           CTRL(L'U')},       cmd_pu, {0}},
         {{OK,           CTRL(L'W')},       cmd_dp, {0}},
         {{OK,           CTRL(L'V')},       cmd_vw, {0}},
         {{OK,           CTRL(L'Y')},       cmd_el, {0}},
+        {{OK,           CTRL(L'Z')},       cmd_gb, {0}},
         {{KEY_CODE_YES, 0},                cmd_uk, {0}},
         {{OK,           0},                NULL,   {0}}
     }

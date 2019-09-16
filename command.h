@@ -71,6 +71,7 @@ bool cmd_ex(EDITOR *e, VIEW *v, const ARG *a); /* expand right margin */
 bool cmd_f(EDITOR *e, VIEW *v, const ARG *a); /* find */
 bool cmd_fb(EDITOR *e, VIEW *v, const ARG *a); /* filter block */
 bool cmd_fc(EDITOR *e, VIEW *v, const ARG *a); /* flip case */
+bool cmd_gb(EDITOR *e, VIEW *v, const ARG *a); /* go back */
 bool cmd_gm(EDITOR *e, VIEW *v, const ARG *a); /* go to bookmark */
 bool cmd_i(EDITOR *e, VIEW *v, const ARG *a); /* insert line before */
 bool cmd_ib(EDITOR *e, VIEW *v, const ARG *a); /* insert block */
@@ -85,6 +86,7 @@ bool cmd_pd(EDITOR *e, VIEW *v, const ARG *a); /* page down */
 bool cmd_ph(EDITOR *e, VIEW *v, const ARG *a); /* define page hieght */
 bool cmd_pu(EDITOR *e, VIEW *v, const ARG *a); /* page up */
 bool cmd_q(EDITOR *e, VIEW *v, const ARG *a); /* quit without save */
+bool cmd_qo(EDITOR *e, VIEW *v, const ARG *a); /* quote next */
 bool cmd_qy(EDITOR *e, VIEW *v, const ARG *a); /* quit without save */
 bool cmd_rd(EDITOR *e, VIEW *v, const ARG *a); /* restore deleted */
 bool cmd_rf(EDITOR *e, VIEW *v, const ARG *a); /* run command file */
