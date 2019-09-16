@@ -49,6 +49,27 @@ All-in-all, tine functions similarly to ED circa AmigaDOS 1.3, with some feature
 AmigaDOS 2 and 3 and a few additional features. In any case, tine should be familiar and
 comfortable to ED users familiar with any version of the editor.
 
+## Screenshots
+The font used in these screenshots is [IBM Plex](https://www.ibm.com/plex/),
+which is the only font with a dotted zero that I've ever really liked.
+
+### Shot 1
+![Screenshot of tine](tine.png)
+
+A screenshot of tine editing a complex program.
+
+### Shot 2
+![Another screenshot of tine](bigshot.png)
+
+Three instances of tine running under [mtm](https://github.com/deadpixi/mtm).
+
+The instance on the top left is showing the output of the `SH` command,
+while the isntance on the bottom left is showing the currently defined
+function keys (i.e. the output of the `DF` command).
+
+The instance on the right is editing text in multiple languages,
+displaying combining characters and other interesting features.
+
 ## The Future
 
 tine does not aim to be much more than an ED clone with a few improvements.

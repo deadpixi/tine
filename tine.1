@@ -167,7 +167,7 @@ the directories named in
 are inspected similarly.
 .Pp
 A file of the form
-.Pa ".tinerc.EXT" ","
+.Pa "tinerc.EXT" ","
 where
 .Em EXT
 is the
@@ -184,7 +184,7 @@ with the
 .Fl n
 flag suppresses the automatic exection of these files.
 .Ss "The Block"
-Some contiguous sequence of lines in the file can be specicially marked;
+Some contiguous sequence of lines in the file can be specially marked;
 these lines are referred to as
 .Dq "the block" "."
 The block can be manipulated in various ways,
@@ -266,6 +266,9 @@ Joins the current and next line.
 Deletes the word/spaces immediately following the cursor.
 .It Ctrl-P
 If the cursor is on a bracket, jump to its partner.
+.It Ctrl-Q
+Quote the next character typed.
+That is, insert the next character literally, even if it would normally be a command.
 .It Ctrl-R
 Move to the space following the previous word.
 .It Ctrl-T
@@ -278,6 +281,8 @@ Delete the previous word.
 Redraw the screen.
 .It Ctrl-Y
 Delete from the cursor to the end of the current line.
+.It Ctrl-Z
+Go back to previous position.
 .El
 .Pp
 Note that any of the sequences above that are prefixed with
@@ -331,6 +336,7 @@ Each command takes exactly zero or one argument of a given type,
 though some commands provide a useful default if it is not specified.
 Arguments can be strings, numbers, or two strings together.
 Strings can be delimited by any non-alphanumeric character except semicolon and parentheses.
+This allows the use of a delimiter character that does not appear in the string itself.
 .Pp
 Multiple commands can be specified on the same command line by separating them with semicolons.
 Multiple commands can be grouped into one logical command by enclosing them in parentheses.
@@ -338,7 +344,8 @@ Multiple commands can be grouped into one logical command by enclosing them in p
 Pressing any key while an extended command is running will abort execution.
 .Pp
 Whitespace can be omitted where its absence does not result in any ambiguity.
-This includes whitespace between commands and arguments.
+This includes whitespace between commands and arguments,
+or whitespace between numeric repeat counts and command names.
 .Pp
 Below is a list of what extended mode commands are available;
 in their descriptions,
@@ -356,13 +363,17 @@ again representing the delimiter.
 The final delimiter in a string or strings can be elided at the end of a command line.
 .Bl -tag -width Ds
 .It "A/s/"
-Inserts a line after the current line containing the string
+.Dq "After"
+Insert a line after the current line containing the string
 .Ar s "."
 .It "B"
+.Dq "Bottom"
 Moves to the bottom of the file.
 .It "BE"
+.Dq "Block End"
 Specifies that the block should end at the current line.
 .It "BF/s/"
+.Dq "Backwards Find"
 Searches backwards through the file for the given string.
 If unspecified, the last string used in a
 .Ic BF ","
@@ -372,70 +383,94 @@ or
 .Ic "EQ"
 command is reused.
 .It "BM n"
+.Dq "BookMark"
 Set bookmark
 .Ar n
 to the current cursor position.
 .Ar n
 must be between one and ten, inclusive.
 .It "BS"
+.Dq "Block Start"
 Specifies that the block should start at the current line.
 .It "CB"
+.Dq "Clear Block"
 Clears the block.
 .It "CD"
+.Dq "Cursor Down"
 Move the cursor down one line without changing its column.
 .It "CE"
+.Dq "Cursor End"
 Move the cursor to the end of the current line.
 .It "CF n"
+.Dq "Call Function"
 Call the extended command bound to function key
 .Ar n "."
 .Ar n
 must be between one and ten, inclusive.
 .It "CJ"
+.Dq "Cursor Jump
 Move the cursor to the end of the current line;
 if it is already there, move it to the beginning.
 .It "CL"
+.Dq "Cursor Left"
 Move the cursor left one screen position.
 .It "CR"
+.Dq "Cursor Right"
 Move the cursor right one screen position.
 .It "CS"
+.Dq "Cursor Start"
 Move the cursor to the start of the line.
 .It "CT"
+.Dq "Collapse Tabs"
 Cause the tab key to advance the cursor without inserting any characters.
 .It "CU"
+.Dq "Cursor Up"
 Move the cursor up one line without changing its column.
 .It "D"
+.Dq "Delete"
 Delete the current line.
 .It "DB"
+.Dq "Delete Block"
 Delete the block.
 .It "DC"
+.Dq "Delete Character"
 Delete the character under the cursor.
 .It "DF"
+.Dq "Display Functions"
 Display the extended commands bound to the function keys.
 .It "DL"
+.Dq "Delete Left"
 Delete the character to the left of the cursor.
 .It "DO/s/"
+.Dq "DO command"
 Temporarily suspend
 .Nm
 and execute
 .Ar s
 as an operating system command.
 .It "DP"
+.Dq "Delete Previous"
 Delete the word or spaces preceding the cursor.
 .It "DW"
+.Dq "Delete Word"
 Delete the word or spaces following the cursor.
 .It "E/s/t/"
+.Dq "Exchange"
 Exchange the next instance of
 .Ar s
 with
 .Ar t "."
 This is generally useful with a repetition count.
 .It "EL"
+.Dq "Erase in Line"
 Delete to the end of the line.
 .It "EP"
+.Dq "End Page"
 Move to the beginning of the text on the screen or,
 if already there,
 to the end of the text on the screen.
 .It "EQ"
+.Dq "Exchange with Query"
 Like
 .Ic
 but the user is prompted before each exchange action.
@@ -443,11 +478,14 @@ Replying
 .Li n
 will not exchange the given instance.
 .It "ET"
+.Dq "Expand Tabs"
 Cause the tab key to insert literal tab characters.
 .It "EX"
+.Dq "EXpand margins"
 Ignore the right-hand margin for this line.
 This effect is canceled when the cursor leaves the current line.
 .It "F/s/"
+.Dq "Find"
 Search forwards through the file for string
 .Ar s "."
 If
@@ -461,30 +499,42 @@ or
 .Ic EQ
 command is used.
 .It "FB/s/"
+.Dq "Filter Block"
 Filter block through operating system command
 .Ar s "."
 The existing block is passed as the command's standard input,
 and is replaced with the command's standard output.
 .It "FC"
+.Dq "Flip Case"
 Flip the case of the character under the cursor,
 and move one position to the right.
+.It "GB"
+.Dq "Go Back"
+Returns to the previous location,
+before any long-distance movement commands.
 .It "GM n"
+.Dq "Go to Mark"
 Go to bookmark
 .Ar n "."
 .It "I/s/"
+.Dq "Insert"
 Insert a line above the current line containing the string
 .Ar s "."
 .It "IB"
+.Dq "Insert Block"
 Insert a copy of the block at the current line.
 Unlike most actions that insert lines into the file,
 this does not clear the block.
 .It "IF/s/"
+.Dq "Insert File"
 Insert the contents of file
 .Ar s
 at the current cursor position.
 .It "J"
+.Dq "Join"
 Join the current line and the next.
 .It "LC"
+.Dq "LowerCase"
 Cause subsequent
 .Ic F ","
 .Ic BF ","
@@ -493,9 +543,11 @@ and
 .Ic "EQ"
 commands to ignore case while searching.
 .It "M n"
+.Dq "Move"
 Move to line
 .Ar n "."
 .It "MC/s/t/"
+.Dq "Map Control"
 Cause
 .Nm
 to interpret the pressing of
@@ -509,41 +561,53 @@ and
 .Ar t
 must be single-character strings.
 .It "N"
+.Dq "Next line"
 Move to the beginning of the next line.
 .It "P"
+.Dq "Previous line"
 Move to the beginning of the previous line.
 .It "PD"
+.Dq "Page Down"
 Move down one page.
 .It "PH n"
+.Dq "Page Height"
 Set the number of lines in a page to
 .Ar n "."
 The default is 12.
 .It "PU"
+.Dq "Page Up"
 Move up one page.
 .It "Q"
+.Dq "Quit"
 Quit without saving.
 If the file has unsaved changes, the user is prompted to confirm.
 .It "QY"
+.Dq "Quit, answer Yes"
 Quit without saving.
 No prompting is done if there are unsaved changes.
 .It "RD"
+.Dq "Restore Deleted"
 Insert a copy of the last line deleted with the
 .Li "Ctrl-B"
 or
 .Ic "D"
 commands.
 .It "RF/s/"
+.Dq "Run File"
 Read file
 .Ar "s"
 and execute its contents as a sequence of
 .Nm
 extended commands.
 .It "RM"
+.Dq "Reset Margins"
 Reset the margins to their defaults
 .Pq "that is, 1 for the left margin and undefined for the right" "."
 .It "S"
+.Dq "Split"
 Split the current line at the cursor position.
 .It "SA/s/"
+.Dq "SAve"
 Save the file to the filename
 .Ar s "."
 If
@@ -553,8 +617,10 @@ the name given to
 .Nm
 at startup is used.
 .It "SB"
+.Dq "Show Block"
 Move the display such that the first line of the block is visible on the screen.
 .It "SF/s/t/"
+.Dq "Set Function"
 Set function key
 .Ar s
 to the extended command
@@ -563,41 +629,51 @@ Note that
 .Ar s
 must be a decimal number between one and ten, inclusive.
 .It "SH"
+.Dq "SHow"
 Display some information about the current state of the editor.
 .It "SL n"
+.Dq "Set Left"
 Set the left margin to column
 .Ar n "."
 If
 .Ar n
 is omitted, use the current cursor column.
 .It "SM"
+.Dq "Show Matching"
 If the cursor is over a bracket character,
 move to the matching bracket character.
 .It "SR n"
+.Dq "Set Right"
 Set the right margin to column
 .Ar n "."
 If
 .Ar n
 is omitted, use the current cursor column.
 .It "ST n"
+.Dq "Set Tab"
 Set the tab distance to
 .Ar n
 columns.
 This is the number of columns advanced by the tab key when it is not configured to insert literal tabs,
 and the number of spaces literal tabs will take up when displayed on the screen.
 .It "T"
+.Dq "Top"
 Move to the top of the file.
 .It "TB"
+.Dq "TaB"
 Move to the next tabstop or,
 if the tab key is configured to insert literal tabs,
 insert a tab.
 .It "TY/s/"
+.Dq "TYpe"
 Insert the string
 .Ar s
 as if it had been typed at the keyboard.
 .It "U"
+.Dq "Undo"
 Undo the last file modification.
 .It "UC"
+.Dq "UpperCase"
 Cause subsequent
 .Ic F ","
 .Ic BF ","
@@ -606,16 +682,21 @@ and
 .Ic "EQ"
 commands to respect case while searching.
 .It "WB/s/"
+.Dq "Write Block"
 Write the contents of the block to the file
 .Ar s "."
 .It "WN"
+.Dq "Word Next"
 Move to the first character of the next word.
 .It "WP"
+.Dq "Word Previous"
 Move to the space following the last character of the previous word.
 .It "X"
+.Dq "eXit"
 Exit, saving any changes.
 No prompting is performed.
 .It "XQ"
+.Dq "eXit with Query"
 Exit, prompting to save first if the file has been changed.
 .El
 .Sh ENVIRONMENT
@@ -679,24 +760,28 @@ file to set expanded tab mode automatically when editing makefiles:
 .Pp
 This sets the F3 key to preview the file being edited as a man page:
 .Bd -literal
-   SF%3%BM1;T;BS;B;BE;WB"/tmp/mantmp";CB;DO"man -l /tmp/mantmp;rm -f /tmp/mantmp";GM1%
+   SF%3%T;BS;B;BE;WB"/tmp/mtmp";CB;DO"man /tmp/mtmp;rm -f /tmp/mtmp";GB%
 .Ed
 .Pp
-This uses the bookmark facility to keep track of the current cursor position,
-marks the whole file as a single block,
-writes the block to a temporary file,
-clears the block mark,
-calls the
-.Ic man
-command to display that temporary file,
-and then moves the cursor back to its original position using the bookmark set earlier.
+This marks the whole file as the block by going to the top and setting the block start,
+going to the bottom and setting the block end,
+writing the block to a temporary file,
+clearing the block,
+calling the
+.Xr man 1
+command to display the man page and the
+.Xr rm 1
+command to delete the temporary file,
+and then finally returning the cursor to the remembered position before all this happend.
 .Sh HISTORY
 .Nm
 is a modern-day attempt to clone the
 .Em ED
 display editor from MetaComCo
 .Po
+.Do
 .Nm
+.Dc
 is a rather feeble attempt at a recursive acronym:
 .Dq "tine Is Not ED"
 .Pc "."
@@ -723,7 +808,7 @@ there is no support for right-to-left or bidirectional text,
 nor is there any support for more complex textual forms that are common in many languages.
 .Pp
 The screen update algorithm is wasteful of resources;
-a much more efficient mechanism should be included.
+a much more efficient mechanism should be used.
 .Pp
 There is no support for file locking and nothing prevents two instances of
 .Nm
