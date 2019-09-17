@@ -317,6 +317,8 @@ END
 
 COMMAND(df, NOLOCATOR) /* display function definitions */
     WINDOW *w = e->docview.w;
+    WINDOW *c = e->cmdview.w;
+    int oc = curs_set(0);
     wattron(w, A_BOLD);
     werase(w);
     for (int i = 0; i < FUNC_MAX; i++){ /* XXX handle narrow windows */
@@ -326,7 +328,12 @@ COMMAND(df, NOLOCATOR) /* display function definitions */
     mvwprintw(w, 12, 0, "Type any character to continue");
     wattroff(w, A_BOLD);
     wrefresh(w);
+    werase(c);
+    mvwprintw(c, 0, 0, "Display Functions");
+    wrefresh(c);
     getkeystroke(e, true);
+    if (oc != ERR)
+      curs_set(oc);
 END
 
 COMMAND(dl, NOFLAGS) /* delete character to left */
@@ -770,7 +777,7 @@ COMMAND(sh, NOLOCATOR) /* show information */
 
     char *bs = NULL;
     char *be = NULL;
-
+    int oc = curs_set(0);
     if (v->bs != NONE)
         bs = wstos(v->b->l[v->bs].s, v->b->l[v->bs].n);
     if (v->be != NONE)
@@ -800,6 +807,8 @@ COMMAND(sh, NOLOCATOR) /* show information */
         "tine Copyright (C) 2019 Rob King. See COPYING for details.");
     wrefresh(c);
     getkeystroke(e, true);
+    if (oc != ERR)
+       curs_set(oc);
 END
 
 COMMAND(sl, NOLOCATOR) /* set left margin */
