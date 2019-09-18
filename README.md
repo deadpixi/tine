@@ -57,7 +57,8 @@ which is the only font with a dotted zero that I've ever really liked
 ### Shot 1
 ![Screenshot of tine](tine.png)
 
-A screenshot of tine editing a complex program.
+A screenshot of tine editing itself;
+the terminal has an excellent color scheme.
 
 ### Shot 2
 ![Another screenshot of tine](bigshot.png)
