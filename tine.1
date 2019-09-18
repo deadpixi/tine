@@ -134,6 +134,13 @@ extended commands,
 and reset to their defaults using the
 .Ic RM
 command.
+If the right margin on the current line is currently ignored
+.Po
+see the
+.Ic EX
+command
+.Pc ","
+this field will be prefixed with an asterisk.
 .El
 .Pp
 If an error occurs, the contents of the status line are replaced with an error message.
@@ -164,7 +171,11 @@ defaulting to
 If that file does not exist,
 the directories named in
 .Ev "${XDG_CONFIG_DIRS}"
-are inspected similarly.
+are inspected similarly,
+with
+.Ev "${XDG_CONFIG_DIRS}"
+defaulting to
+/Pa "/etc/xdg" "."
 .Pp
 A file of the form
 .Pa "tinerc.EXT" ","
@@ -188,7 +199,7 @@ Some contiguous sequence of lines in the file can be specially marked;
 these lines are referred to as
 .Dq "the block" "."
 The block can be manipulated in various ways,
-and numerous extended commands refer to it in some way.
+and several extended commands refer to it in some way.
 Note that the block is  cleared
 .Pq "that is, lines are no longer specially marked"
 when a file is modified in certain ways.
@@ -224,6 +235,22 @@ These commands perform more complicated manipulations on the file being edited.
 .Ss "Immediate Mode Commands"
 The following commands are available in immediate mode:
 .Bl -tag -width Ds
+.It Tab
+By default, advances the cursor to the next tab stop
+.Po
+it does
+.Em not
+insert a tab character
+.Pc "."
+This behavior can be modified by the
+.Ic ET
+command,
+which causes
+.Em Tab
+to insert actual tab characters.
+The width of tabstops is controlled by the
+.Ic ST
+command.
 .It Backspace
 Deletes the character to the left of the cursor.
 .It Insert
@@ -253,7 +280,7 @@ Deletes the current line.
 .It Ctrl-D
 Moves down one page.
 .It Ctrl-E
-Moves to the top screen or, if there, to the bottom.
+Moves to the top of the screen or, if there, to the bottom.
 .It Ctrl-F
 Flips the case of the character under the cursor.
 .It Ctrl-G
@@ -265,7 +292,8 @@ Joins the current and next line.
 .It Ctrl-O
 Deletes the word/spaces immediately following the cursor.
 .It Ctrl-P
-If the cursor is on a bracket, jump to its partner.
+If the cursor is on an opening or closing bracket,
+jump to the corresponding opening or closing bracket.
 .It Ctrl-Q
 Quote the next character typed.
 That is, insert the next character literally, even if it would normally be a command.
@@ -282,7 +310,7 @@ Redraw the screen.
 .It Ctrl-Y
 Delete from the cursor to the end of the current line.
 .It Ctrl-Z
-Go back to previous position.
+Go back to previous position before the last large cursor movement.
 .El
 .Pp
 Note that any of the sequences above that are prefixed with
@@ -300,16 +328,19 @@ and then entering the command on the command line
 .Pp
 Most of the immediate mode commands above can be used when editing an extended command.
 Pressing
-.Li Enter
+.Em Enter
 will execute the command line and return to immediate mode,
 while pressing
-.Li Escape
+.Em Escape
 or
-.Li Ctrl-J
+.Em Ctrl-J
 will execute the command line and remain in extended command mode.
+.Em Ctrl-C
+will cancel the current command and return to immediate mode.
+.Pp
 While in extended command mode,
-a virtual cursor is displayed in reverse video in the file area for reference;
-this is most useful when executing commands by pressing escape and remaining in extended command mode.
+a virtual cursor is displayed in reverse video in the file area for reference.
+This is most useful when executing commands by pressing escape and remaining in extended command mode.
 .Pp
 .Nm
 maintains a history of extended commands executed,
@@ -323,9 +354,10 @@ repeat-count command-name argument
 .Pp
 The
 .Li "repeat-count"
-is optional,
+is specified in decimal.
 and specifies how many times the following command should be repeated
-.Pq "the default is 1" "."
+It is optional,
+the default is 1.
 A repeat count of
 .Li RP
 means that the command should be repeated until it fails.
@@ -369,7 +401,7 @@ The final delimiter in a string or strings can be elided at the end of a command
 .Bl -tag -width Ds
 .It "A/s/"
 .Dq "After"
-Insert a line after the current line containing the string
+Insert a line after the current line, containing the string
 .Ar s "."
 .It "B"
 .Dq "Bottom"
