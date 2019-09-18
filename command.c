@@ -33,6 +33,7 @@ prompt(EDITOR *e, const char *p)
 static void
 fixblock(VIEW *v)
 {
+    cleartag(v->b, BLOCK);
     if (v->bs == NONE || v->be == NONE)
         return;
     if (v->bs > v->be){
@@ -40,6 +41,7 @@ fixblock(VIEW *v)
         v->bs = v->be;
         v->be = l;
     }
+    settag(v->b, BLOCK, pos(v->bs, 0), pos(v->be, SIZE_MAX - 1), A_REVERSE);
 }
 
 static bool
@@ -74,7 +76,7 @@ find(EDITOR *e, VIEW *v, POS op, bool r)
     if (!e->find || !e->findn)
         return error(e, "Empty target");
 
-    clearhilight(v);
+    cleartag(b, HIGHLIGHT);
     do{
         if (!iter(b, &op))
             return error(e, "Search failed");
@@ -86,7 +88,10 @@ find(EDITOR *e, VIEW *v, POS op, bool r)
         }
         if (i == e->findn){
             v->p = op;
-            hilight(v, p, op);
+            settag(b, HIGHLIGHT, op, p, A_UNDERLINE | A_BOLD);
+            if (e->focusview == &e->cmdview)
+               settag(b, VIRTCURS, op, pos(op.l, op.c + 1), A_REVERSE);
+            redisplay(&e->docview);
             return true;
         }
     } while (!atend(b, op));
@@ -185,10 +190,12 @@ enum{
       endfunc:                                           \
       fixblock(&e->docview);                             \
       fixcursor(e);                                      \
-      if (flags & CLEARSBLOCK)                           \
+      if (flags & CLEARSBLOCK){                          \
+         cleartag(v->b, BLOCK);                          \
          v->bs = v->be = NONE;                           \
+      }                                                  \
       if (!(flags & SETSHILITE))                         \
-         v->hls = v->hle = pos(NONE, NONE);              \
+         cleartag(v->b, HIGHLIGHT);                      \
       if (v->p.l != ol)                                  \
          v->ex = false;                                  \
       if (!(flags & NOLOCATOR))                          \

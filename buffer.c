@@ -66,7 +66,12 @@ pop(BUFFER *b)
 BUFFER *
 openbuffer(void)
 {
-   return calloc(1, sizeof(BUFFER));
+   BUFFER *b = calloc(1, sizeof(BUFFER));
+   if (!b)
+      return NULL;
+   for (int i = 0; i < TAG_MAX; i++)
+      b->tags[i].p1 = b->tags[i].p2 = pos(NONE, NONE);
+   return b;
 }
 
 void
@@ -319,4 +324,24 @@ clearundo(BUFFER *b)
 {
     while (b->j)
         pop(b);
+}
+
+bool
+settag(BUFFER *b, tag t, POS p1, POS p2, int v)
+{
+   if (t >= TAG_MAX || p1.l == NONE || p1.c == NONE || p2.l == NONE || p2.c == NONE)
+      return false;
+   b->tags[t].p1 = p1;
+   b->tags[t].p2 = p2;
+   b->tags[t].v = v;
+   return true;
+}
+
+void
+cleartag(BUFFER *b, tag t)
+{
+   if (t < TAG_MAX){
+      b->tags[t].p1 = pos(NONE, NONE);
+      b->tags[t].p2 = pos(NONE, NONE);
+   }
 }

@@ -51,7 +51,8 @@ comfortable to ED users familiar with any version of the editor.
 
 ## Screenshots
 The font used in these screenshots is [IBM Plex](https://www.ibm.com/plex/),
-which is the only font with a dotted zero that I've ever really liked.
+which is the only font with a dotted zero that I've ever really liked
+(usually it's slashed zero or nothing).
 
 ### Shot 1
 ![Screenshot of tine](tine.png)

@@ -24,7 +24,6 @@ initview(VIEW *v, WINDOW *w, MODE *m, void (*statuscb)(EDITOR *e, VIEW *v))
     v->ph = DEFAULT_PH;
     v->statuscb = statuscb;
     v->delay = true;
-    clearhilight(v);
     return true;
 }
 
@@ -44,6 +43,8 @@ docstatus(EDITOR *e, VIEW *v)
 {
     WINDOW *w = e->cmdview.w;
     int lines, cols;
+
+    cleartag(e->docview.b, VIRTCURS);
 
     getmaxyx(w, lines, cols); (void)lines;
     char buf[cols + 1];
@@ -80,12 +81,22 @@ docstatus(EDITOR *e, VIEW *v)
     wrefresh(w);
 }
 
+static void
+cmdstatus(EDITOR *e, VIEW *v)
+{
+   VIEW *dv = &e->docview;
+   cleartag(dv->b, VIRTCURS);
+   int s = dv->p.l >= dv->bs && dv->p.l <= dv->be? A_NORMAL : A_REVERSE;
+   settag(dv->b, VIRTCURS, dv->p, pos(dv->p.l, dv->p.c + 1), s);
+   redisplay(dv);
+}
+
 EDITOR *
 openeditor(const char *name, WINDOW *docwin, WINDOW *cmdwin)
 {
     EDITOR *e = calloc(1, sizeof(EDITOR));
     if (!e
-    ||  !initview(&e->cmdview, cmdwin, cmdmode, NULL)
+    ||  !initview(&e->cmdview, cmdwin, cmdmode, cmdstatus)
     ||  !initview(&e->docview, docwin, docmode, docstatus)){
         closeeditor(e);
         return NULL;
@@ -165,6 +176,25 @@ reframe(VIEW *v)
         v->tos.c = v->p.c - 0.33 * cols;
 }
 
+static bool
+between(POS p, POS a, POS b)
+{
+   return (a.l != NONE && a.c != NONE && b.l != NONE && b.c != NONE)
+       && (p.l > a.l || (p.l == a.l && p.c >= a.c))
+       && (p.l < b.l || (p.l == b.l && p.c < b.c));
+}
+
+static int
+gettag(const BUFFER *b, POS p)
+{
+   for (int i = 0; i < TAG_MAX; i++){
+      const TAG *t = b->tags + i;
+      if (between(p, t->p1, t->p2))
+         return t->v;
+   }
+   return 0;
+}
+
 void
 redisplay(VIEW *v)
 {
@@ -173,36 +203,21 @@ redisplay(VIEW *v)
     size_t lines, cols, y = 0, x = 0;
     getmaxyx(v->w, lines, cols);
 
-    if (v->bs < v->tos.l && v->be >= v->tos.l)
-      wattron(v->w, A_REVERSE);
-    if (v->hls.l < v->tos.l && v->hle.l >= v->tos.l)
-      wattron(v->w, A_BOLD | A_UNDERLINE);
-
     werase(v->w);
     for (size_t l = 0; l < lines && v->tos.l + l < v->b->n; l++){
-        if (v->bs != NONE && v->be != NONE){
-            if (v->tos.l + l == v->bs)
-                wattron(v->w, A_REVERSE);
-            else if (v->tos.l + l == v->be + 1)
-                wattroff(v->w, A_REVERSE);
-        }
-        if (v->tos.l + l > v->hle.l)
-            wattroff(v->w, A_BOLD | A_UNDERLINE);
-
         size_t c = 0, i = 0;
         while (c < cols){
+            wattrset(v->w, gettag(v->b, pos(v->tos.l + l, v->tos.c + i)));
             wmove(v->w, l, c);
             if (v->tos.l + l == v->p.l && v->tos.c + i == v->p.c)
                 getyx(v->w, y, x);
-            if (v->tos.l + l == v->hls.l && v->tos.c + i == v->hls.c)
-                wattron(v->w, A_BOLD | A_UNDERLINE);
-            if (v->tos.l + l == v->hle.l && v->tos.c + i == v->hle.c)
-                wattroff(v->w, A_BOLD | A_UNDERLINE);
             wchar_t w = charat(v->b, pos(v->tos.l + l, v->tos.c + i));
             if (w == '\t'){
-                c++;
-                while (c % v->ts)
+                waddch(v->w, ' '); c++;
+                while (c % v->ts){
+                    waddch(v->w, ' ');
                     c++;
+                }
             } else{
                 int cw = wcwidth(w) > 0? wcwidth(w) : 0;
                 wchar_t s[] = {w, 0, 0};
@@ -219,7 +234,6 @@ redisplay(VIEW *v)
             i++;
         }
     }
-    wattroff(v->w, A_BOLD | A_UNDERLINE | A_REVERSE);
     wmove(v->w, y, x);
     wrefresh(v->w);
 }
@@ -272,25 +286,4 @@ static bool
 pbefore(POS p1, POS p2)
 {
     return p1.l < p2.l || (p1.l == p2.l && p1.c < p2.c);
-}
-
-void
-hilight(VIEW *v, POS p1, POS p2)
-{
-    if (pbefore(p1, p2)){
-        v->hls = p1;
-        v->hle = p2;
-    } else{
-        v->hls = p2;
-        v->hle = p1;
-    }
-    redisplay(v);
-}
-
-void
-clearhilight(VIEW *v)
-{
-    v->hls = pos(NONE, NONE);
-    v->hle = pos(NONE, NONE);
-    redisplay(v);
 }

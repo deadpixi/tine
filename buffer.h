@@ -20,6 +20,20 @@ struct LINE{
     wchar_t *s;
 };
 
+typedef struct TAG TAG;
+struct TAG{
+   POS p1;
+   POS p2;
+   int v;
+};
+
+typedef enum{ /* note that these must be in descending order by priority */
+   VIRTCURS,
+   HIGHLIGHT,
+   BLOCK,
+   TAG_MAX
+} tag;
+
 typedef uint64_t txn;
 typedef struct JOURNAL JOURNAL;
 typedef struct BUFFER BUFFER;
@@ -31,6 +45,8 @@ struct BUFFER{
     int nbegin;
     txn t;
     JOURNAL *j;
+
+    TAG tags[TAG_MAX];
 };
 
 BUFFER *openbuffer();
@@ -50,6 +66,9 @@ bool atbot(const BUFFER *b, POS p);
 bool ateol(const BUFFER *b, POS p);
 
 POS pos(lineno l, colno c);
+
+bool settag(BUFFER *b, tag t, POS p1, POS p2, int v);
+void cleartag(BUFFER *b, tag t);
 
 void enableundo(BUFFER *b);
 bool mark(BUFFER *b);

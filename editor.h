@@ -12,7 +12,7 @@
 typedef struct VIEW VIEW;
 struct VIEW{
     BUFFER *b;
-    POS p, tos, hls, hle, gb;
+    POS p, tos, gb;
     WINDOW *w;
     MODE *m;
     lineno bs, be;

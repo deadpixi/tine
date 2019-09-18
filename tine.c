@@ -124,6 +124,15 @@ runstartupfiles(const char *fn)
 }
 
 static void
+fixloc(void)
+{
+   int y, x;
+   getyx(editor->focusview->w, y, x);
+   wmove(editor->focusview->w, y, x);
+   wrefresh(editor->focusview->w);
+}
+
+static void
 run(void)
 {
     if (editor->focusview->statuscb)
@@ -131,6 +140,7 @@ run(void)
     redisplay(editor->focusview);
 
     while (editor->running){
+        fixloc();
         KEYSTROKE k = getkeystroke(editor, true);
         if (k.o == ERR)
             continue;
