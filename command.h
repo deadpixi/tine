@@ -42,6 +42,7 @@ bool cmd_be(EDITOR *e, VIEW *v, const ARG *a); /* block end at cursor line */
 bool cmd_bf(EDITOR *e, VIEW *v, const ARG *a); /* backwards find */
 bool cmd_bm(EDITOR *e, VIEW *v, const ARG *a); /* set bookmark */
 bool cmd_bs(EDITOR *e, VIEW *v, const ARG *a); /* block start at cursor line */
+bool cmd_ca(EDITOR *e, VIEW *v, const ARG *a); /* cancel command */
 bool cmd_cb(EDITOR *e, VIEW *v, const ARG *a); /* clear block */
 bool cmd_cd(EDITOR *e, VIEW *v, const ARG *a); /* cursor down, same column */
 bool cmd_ce(EDITOR *e, VIEW *v, const ARG *a); /* cursor to end of line */

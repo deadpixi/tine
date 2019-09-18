@@ -234,6 +234,13 @@ COMMAND(bs, NOLOCATOR) /* block start at cursor line */
    v->bs = p.l;
 END
 
+COMMAND(ca, NOFLAGS) /* cancel command mode */
+   cmd_cs(e, v, a);
+   cmd_el(e, v, a);
+   e->focusview = &e->docview;
+   e->err[0] = 0;
+END
+
 COMMAND(cb, NEEDSBLOCK | CLEARSBLOCK | NOLOCATOR) /* clear block */
    /* called for side effect */
 END

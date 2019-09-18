@@ -34,6 +34,7 @@ static MODE cmdmodetab ={
         {{OK,           L'\t'},            cmd_tb, {0}},
         {{OK,           CTRL(L'[')},       cmd_rs, {0}},
         {{OK,           CTRL(L']')},       cmd_cj, {0}},
+        {{OK,           CTRL(L'C')},       cmd_ca, {0}},
         {{OK,           CTRL(L'F')},       cmd_fc, {0}},
         {{OK,           CTRL(L'O')},       cmd_dw, {0}},
         {{OK,           CTRL(L'P')},       cmd_sm, {0}},
