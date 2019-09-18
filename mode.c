@@ -29,7 +29,7 @@ static MODE cmdmodetab ={
         {{KEY_CODE_YES, KEY_SRIGHT},       cmd_ce, {0}},
         {{KEY_CODE_YES, KEY_RESIZE},       cmd_vw, {0}},
         {{KEY_CODE_YES, KEY_ENTER},        cmd_ru, {0}},
-        {{OK,           L'\n'},            cmd_ru, {0}},
+        {{OK,           L'\n'},            cmd_rs, {0}},
         {{OK,           L'\r'},            cmd_ru, {0}},
         {{OK,           L'\t'},            cmd_tb, {0}},
         {{OK,           CTRL(L'[')},       cmd_rs, {0}},
