@@ -5,6 +5,7 @@
 #include <wchar.h>
 #include <wctype.h>
 
+#include "structs.h"
 #include "editor.h"
 #include "command.h"
 

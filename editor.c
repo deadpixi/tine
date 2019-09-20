@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "structs.h"
 #include "editor.h"
 #include "mode.h"
 #include "util.h"

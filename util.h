@@ -5,8 +5,6 @@
 #include <stddef.h>
 #include <wchar.h>
 
-#include "buffer.h"
-
 char *ellipsize(const char *s, size_t l, bool right);
 wchar_t *dupstr(const wchar_t *s, size_t n);
 wchar_t *stows(const char *s, size_t n);

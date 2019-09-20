@@ -189,6 +189,9 @@ is also executed if it exists.
 If the named file has no extension,
 the whole filename is treated as the extension.
 .Pp
+In startup files, blank lines are ignored.
+Lines whose first non-whitespace character is a single quote are considered commentary.
+.Pp
 Calling
 .Nm
 with the

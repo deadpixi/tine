@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <wchar.h>
 
+#include "structs.h"
 #include "editor.h"
 #include "util.h"
 

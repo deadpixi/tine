@@ -9,7 +9,6 @@
 #include "buffer.h"
 #include "mode.h"
 
-typedef struct VIEW VIEW;
 struct VIEW{
     BUFFER *b;
     POS p, tos, gb;
@@ -27,7 +26,6 @@ struct VIEW{
 #define CTRL_MAX 32
 #define ERR_MAX 127
 #define BM_MAX 10
-typedef struct EDITOR EDITOR;
 struct EDITOR{
     bool running, needsresize;
     VIEW cmdview, docview, *focusview;

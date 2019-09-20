@@ -1,6 +1,7 @@
 #include <ncursesw/ncurses.h>
 #include <string.h>
 
+#include "structs.h"
 #include "mode.h"
 
 typedef struct MAP MAP;

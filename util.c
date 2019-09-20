@@ -8,7 +8,6 @@
 #include <unistd.h>
 #include <wchar.h>
 
-#include "buffer.h"
 #include "util.h"
 
 char *

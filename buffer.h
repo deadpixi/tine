@@ -8,19 +8,16 @@
 #define NONE ((size_t)-1)
 typedef size_t lineno;
 typedef size_t colno;
-typedef struct POS POS;
 struct POS{
     lineno l;
     colno c;
 };
 
-typedef struct LINE LINE;
 struct LINE{
     size_t n;
     wchar_t *s;
 };
 
-typedef struct TAG TAG;
 struct TAG{
    POS p1;
    POS p2;
@@ -35,8 +32,6 @@ typedef enum{ /* note that these must be in descending order by priority */
 } tag;
 
 typedef uint64_t txn;
-typedef struct JOURNAL JOURNAL;
-typedef struct BUFFER BUFFER;
 struct BUFFER{
     size_t n;
     LINE *l;

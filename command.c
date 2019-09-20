@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "structs.h"
 #include "buffer.h"
 #include "command.h"
 #include "editor.h"
@@ -646,6 +647,13 @@ COMMAND(qy, NOFLAGS) /* force quit without save */
     e->running = false;
 END
 
+COMMAND(rd, CLEARSBLOCK) /* restore deleted */
+   if (!v->dl)
+      ERROR("No saved line");
+   ARG a1 = {.t = ARG_STRING, .s1 = v->dl, .n1 = v->dln};
+   return cmd_i(e, v, &a1);
+END
+
 static bool
 iscomment(const wchar_t *s, size_t n)
 {
@@ -656,13 +664,6 @@ iscomment(const wchar_t *s, size_t n)
       i++;
    return s[i] == L'\'' || s[i] == 0;
 }
-
-COMMAND(rd, CLEARSBLOCK) /* restore deleted */
-   if (!v->dl)
-      ERROR("No saved line");
-   ARG a1 = {.t = ARG_STRING, .s1 = v->dl, .n1 = v->dln};
-   return cmd_i(e, v, &a1);
-END
 
 static bool
 cmd_rf_cb(const wchar_t *s, size_t n, void *p)

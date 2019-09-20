@@ -6,9 +6,6 @@
 #include <wchar.h>
 
 
-typedef struct EDITOR EDITOR;
-typedef struct VIEW VIEW;
-
 #define CMD_NAME_MAX 2
 
 typedef enum{
@@ -18,14 +15,12 @@ typedef enum{
     ARG_NUMBER
 } argtype;
 
-typedef struct ARG ARG;
 struct ARG{
     argtype t;
     size_t n1, n2;
     const wchar_t *s1, *s2;
 };
 
-typedef struct CMD CMD;
 struct CMD{
    const wchar_t *n;
    argtype a;
