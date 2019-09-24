@@ -139,7 +139,7 @@ safewrite(int fd, const char *s, size_t n)
 }
 
 static bool
-writelines(int fd, const BUFFER *b, lineno ls, lineno le)
+writelines(int fd, EDITOR *e, const BUFFER *b, lineno ls, lineno le)
 {
    char *s = NULL;
    bool rc = true;
@@ -147,10 +147,12 @@ writelines(int fd, const BUFFER *b, lineno ls, lineno le)
       if (b->l[l].n){
          s = wstos(b->l[l].s, trimlength(&b->l[l]));
          if (!s)
-            return false;
+            return close(fd), error(e, "Out of memory");
          if (!(rc = safewrite(fd, s, strlen(s)))){
+            int err = errno;
             free(s);
-            break;
+            close(fd);
+            return error(e, strerror(err));
          }
          free(s);
       }
@@ -479,7 +481,7 @@ COMMAND(fb, MARK | NEEDSBLOCK | CLEARSBLOCK) /* filter block through command */
    } else{
       free(s);
       close(tochild[0]);
-      writelines(tochild[1], v->b, v->bs, v->be);
+      writelines(tochild[1], e, v->b, v->bs, v->be);
       while (waitpid(pid, NULL, WNOHANG) == 0){
          if (getkeystroke(e, false).o != ERR){
             kill(pid, SIGKILL);
@@ -756,7 +758,7 @@ COMMAND(sa, NOLOCATOR) /* save text to file */
        free(fn);
        ERROR("Could not open file");
     }
-    bool r = writelines(fd, b, 0, b->n? b->n - 1 : 0);
+    bool r = writelines(fd, e, b, 0, b->n? b->n - 1 : 0);
     if (rc)
         e->docview.b->dirty = false;
     free(fn);
@@ -809,8 +811,8 @@ COMMAND(sh, NOLOCATOR) /* show information */
         mvwprintw(w, 5, 0, "Right margin    Not set");
     else
         mvwprintw(w, 5, 0, "Right margin    %zu", v->rm + 1);
-    mvwprintw(w, 6, 0, "Block start     %s", bs? bs : "Not set");
-    mvwprintw(w, 7, 0, "Block end       %s", be? be : "Not set");
+    mvwprintw(w, 6, 0, "Block start     %-12s", bs? bs : "Not set");
+    mvwprintw(w, 7, 0, "Block end       %-12s", be? be : "Not set");
     mvwprintw(w, 9, 0, "Type any character to continue");
     wattroff(w, A_BOLD);
     wrefresh(w);
@@ -975,7 +977,7 @@ COMMAND(wb, NOLOCATOR) /* write block */
         free(fn);
         ERROR("Could not open file");
     }
-    bool r = writelines(fd, v->b, v->bs, v->be);
+    bool r = writelines(fd, e, v->b, v->bs, v->be);
     free(fn);
     RETURN(r);
 END

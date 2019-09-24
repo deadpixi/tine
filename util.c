@@ -45,7 +45,7 @@ stows(const char *s, size_t n)
         return free(mbs), NULL;
 
     size_t wcr = mbstowcs(wcs, mbs, wcn);
-    if (!wcr || wcr == (size_t)-1)
+    if (wcr == (size_t)-1)
         return free(mbs), free(wcs), NULL;
 
     free(mbs);
@@ -66,7 +66,7 @@ wstos(const wchar_t *s, size_t n)
         return free(wcs), NULL;
 
     size_t mbr = wcstombs(mbs, wcs, mbn);
-    if (!mbr || mbr == (size_t)-1)
+    if (mbr == (size_t)-1)
         return free(mbs), free(wcs), NULL;
 
     free(wcs);
