@@ -814,8 +814,8 @@ COMMAND(sh, NOLOCATOR) /* show information */
         mvwprintw(w, 5, 0, "Right margin    Not set");
     else
         mvwprintw(w, 5, 0, "Right margin    %zu", v->rm + 1);
-    mvwprintw(w, 6, 0, "Block start     %-12s", bs? trimleft(bs) : "Not set");
-    mvwprintw(w, 7, 0, "Block end       %-12s", be? trimleft(be) : "Not set");
+    mvwprintw(w, 6, 0, "Block start     %-.24s%s", bs? trimleft(bs) : "Not set", bs? "..." : "");
+    mvwprintw(w, 7, 0, "Block end       %-.24s%s", be? trimleft(be) : "Not set", be? "..." : "");
     mvwprintw(w, 9, 0, "Type any character to continue");
     wattroff(w, A_BOLD);
     wrefresh(w);
