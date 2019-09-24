@@ -145,16 +145,19 @@ writelines(int fd, EDITOR *e, const BUFFER *b, lineno ls, lineno le)
    bool rc = true;
    for (lineno l = ls; rc && b->n && l <= le; l++){
       if (b->l[l].n){
-         s = wstos(b->l[l].s, trimlength(&b->l[l]));
-         if (!s)
-            return close(fd), error(e, "Out of memory");
-         if (!(rc = safewrite(fd, s, strlen(s)))){
-            int err = errno;
+         size_t n = trimlength(&b->l[l]);
+         if (n){
+            s = wstos(b->l[l].s, n);
+            if (!s)
+               return close(fd), error(e, "Out of memory");
+            if (!(rc = safewrite(fd, s, strlen(s)))){
+               int err = errno;
+               free(s);
+               close(fd);
+               return error(e, strerror(err));
+            }
             free(s);
-            close(fd);
-            return error(e, strerror(err));
          }
-         free(s);
       }
       safewrite(fd, "\n", strlen("\n"));
    }
