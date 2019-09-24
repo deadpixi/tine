@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -113,4 +114,14 @@ dupstr(const wchar_t *s, size_t n)
         return r;
     wmemcpy(r, s, n);
     return r;
+}
+
+const char *
+trimleft(const char *s)
+{
+   if (!s)
+      return NULL;
+   while (*s && isspace(*s))
+      s++;
+   return s;
 }
