@@ -331,7 +331,7 @@ COMMAND(db, MARK | NEEDSBLOCK | CLEARSBLOCK) /* delete block */
 END
 
 COMMAND(dc, NOFLAGS | NEEDSLINES) /* delete character at cursor */
-   if (p.c < b->l[p.l].n && b->l[p.l].n)
+   if (b->n && p.c < b->l[p.l].n && b->l[p.l].n)
       RETURN(deletetext(b, p, 1));
 END
 
