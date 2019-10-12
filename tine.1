@@ -134,6 +134,7 @@ extended commands,
 and reset to their defaults using the
 .Ic RM
 command.
+.Pp
 If the right margin on the current line is currently ignored
 .Po
 see the
@@ -141,9 +142,21 @@ see the
 command
 .Pc ","
 this field will be prefixed with an asterisk.
+.Pp
+If auto-indent is currently enabled
+.Po
+see the
+.Ic AI
+and
+.Ic NI
+commands
+.Pc ","
+the left margin is displayed as
+.Li ">" "."
 .El
 .Pp
-If an error occurs, the contents of the status line are replaced with an error message.
+If an error occurs, the contents of the status line are replaced with an error message
+until the next keystroke.
 .Ss "Word Wrap and Margins"
 .Nm
 maintains a left and right margin,
@@ -151,8 +164,8 @@ settable with the
 .Ic SL
 and
 .Ic SR
-commands, respectively.
-New lines will be default start offset to the left margin
+commands respectively.
+New lines will by default start offset to the left margin
 .Pq "though the cursor can be moved to before the left margin if desired"
 and words will wrap at the right margin.
 .Nm
@@ -357,7 +370,7 @@ repeat-count command-name argument
 .Pp
 The
 .Li "repeat-count"
-is specified in decimal.
+is specified in decimal,
 and specifies how many times the following command should be repeated
 It is optional,
 the default is 1.
@@ -406,6 +419,9 @@ The final delimiter in a string or strings can be elided at the end of a command
 .Dq "After"
 Insert a line after the current line, containing the string
 .Ar s "."
+.It "AI"
+.Dq "Auto-Indent"
+Enable auto-indent mode.
 .It "B"
 .Dq "Bottom"
 Moves to the bottom of the file.
@@ -432,6 +448,9 @@ must be between one and ten, inclusive.
 .It "BS"
 .Dq "Block Start"
 Specifies that the block should start at the current line.
+.It "BT"
+.Dq "Back Tab"
+Move the cursor to the previous tab position.
 .It "CB"
 .Dq "Clear Block"
 Clears the block.
@@ -603,6 +622,9 @@ must be single-character strings.
 .It "N"
 .Dq "Next line"
 Move to the beginning of the next line.
+.It "NI"
+.Dq "Normal Indent"
+Disable auto-indent mode.
 .It "P"
 .Dq "Previous line"
 Move to the beginning of the previous line.

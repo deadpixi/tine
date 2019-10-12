@@ -51,18 +51,23 @@ docstatus(EDITOR *e, VIEW *v)
     char buf[cols + 1];
     memset(buf, 0, sizeof(buf));
 
-    char rm[25] = {0};
+    char rm[25] = {0}, lm[25] = {0};
     if (v->rm != NONE)
         snprintf(rm, sizeof(rm) - 1, "%zu", v->rm + 1);
     else
         snprintf(rm, sizeof(rm) - 1, "?");
+
+    if (v->ai)
+        snprintf(lm, sizeof(lm) - 1, ">");
+    else
+        snprintf(lm, sizeof(lm) - 1, "%zu", v->lm == NONE? 1 : v->lm + 1);
 
     if (e->err[0])
         snprintf(buf, cols, "%s", e->err);
     else{
         char *fn = ellipsize(basename(e->name), 12, false);
         snprintf(buf, cols,
-         "%sFile=%-15s Line=%-5zu Col=%-5zu Block=%s%s %sTabs=%-2zu %sMargins=%zu-%s",
+         "%sFile=%-15s Line=%-5zu Col=%-5zu Block=%s%s %sTabs=%-2zu %sMargins=%s-%s",
          v->b->dirty? "*" : " ",
          fn? fn : basename(e->name),
          v->p.l + 1, v->p.c + 1,
@@ -71,7 +76,7 @@ docstatus(EDITOR *e, VIEW *v)
          v->et? "*" : " ",
          v->ts,
          v->ex? "*" : " ",
-         v->lm == NONE? 1 : v->lm + 1,
+         lm,
          rm);
          free(fn);
     }

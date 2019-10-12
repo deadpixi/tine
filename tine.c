@@ -50,7 +50,7 @@ initializescreen(void)
     intrflush(stdscr, FALSE);
 }
 
-static bool
+static void
 loadfile(const char *fn)
 {
     wchar_t *s = stows(fn, strlen(fn));
@@ -58,9 +58,8 @@ loadfile(const char *fn)
         quit("Out of memory\n", EXIT_FAILURE);
     ARG a = {.t = ARG_STRING, .s1 = s, .n1 = wcslen(s)};
     errno = 0;
-    bool rc = cmd_if(editor, &editor->docview, &a);
+    cmd_if(editor, &editor->docview, &a);
     free(s);
-    return rc;
 }
 
 static void
@@ -178,7 +177,8 @@ main(int argc, char **argv)
     initializescreen();
     if ((editor = openeditor(argv[0], stdscr, cmdwin)) == NULL)
         return fputs("out of memory", stderr), EXIT_FAILURE;
-    if (loadfile(argv[0]) && runrc)
+    loadfile(argv[0]);
+    if (runrc)
        runstartupfiles(argv[0]);
     enableundo(editor->docview.b);
     editor->docview.b->dirty = false;

@@ -32,11 +32,13 @@ const CMD *lookup(const wchar_t *s);
 bool call(const CMD *c, EDITOR *e, VIEW *v, const ARG *a);
 
 bool cmd_a(EDITOR *e, VIEW *v, const ARG *a); /* insert line after current */
+bool cmd_ai(EDITOR *e, VIEW *v, const ARG *a); /* enable auto-indent */
 bool cmd_b(EDITOR *e, VIEW *v, const ARG *a); /* move to bottom of file */
 bool cmd_be(EDITOR *e, VIEW *v, const ARG *a); /* block end at cursor line */
 bool cmd_bf(EDITOR *e, VIEW *v, const ARG *a); /* backwards find */
 bool cmd_bm(EDITOR *e, VIEW *v, const ARG *a); /* set bookmark */
 bool cmd_bs(EDITOR *e, VIEW *v, const ARG *a); /* block start at cursor line */
+bool cmd_bt(EDITOR *e, VIEW *v, const ARG *a); /* backwards tab */
 bool cmd_ca(EDITOR *e, VIEW *v, const ARG *a); /* cancel command */
 bool cmd_cb(EDITOR *e, VIEW *v, const ARG *a); /* clear block */
 bool cmd_cd(EDITOR *e, VIEW *v, const ARG *a); /* cursor down, same column */
@@ -77,6 +79,7 @@ bool cmd_lc(EDITOR *e, VIEW *v, const ARG *a); /* case-sensitive searching */
 bool cmd_m(EDITOR *e, VIEW *v, const ARG *a); /* move to line */
 bool cmd_mc(EDITOR *e, VIEW *v, const ARG *a); /* remap control key */
 bool cmd_n(EDITOR *e, VIEW *v, const ARG *a); /* move to beginning of next line */
+bool cmd_ni(EDITOR *e, VIEW *v, const ARG *a); /* disable autoindent */
 bool cmd_p(EDITOR *e, VIEW *v, const ARG *a); /* move to beginning of previous line */
 bool cmd_pd(EDITOR *e, VIEW *v, const ARG *a); /* page down */
 bool cmd_ph(EDITOR *e, VIEW *v, const ARG *a); /* define page hieght */

@@ -218,6 +218,10 @@ COMMAND(a, MARK | CLEARSBLOCK) /* insert line after current */
    RETURN(insertline(b, p.l + 1) && inserttext(b, pos(p.l + 1, 0), a->s1, a->n1));
 END
 
+COMMAND(ai, NOLOCATOR) /* autoindent */
+   v->ai = true;
+END
+
 COMMAND(b, MARK | NOLOCATOR) /* move to bottom of file */
    v->p = pos(b->n? b->n - 1 : 0, 0);
 END
@@ -238,6 +242,15 @@ END
 
 COMMAND(bs, NOLOCATOR) /* block start at cursor line */
    v->bs = p.l;
+END
+
+COMMAND(bt, NOLOCATOR) /* backwards tab */
+    if (!cmd_cl(e, v, a))
+      FAIL;
+    while (v->p.c > 0 && v->p.c % v->ts){
+      if (!cmd_cl(e, v,a ))
+         FAIL;
+    }
 END
 
 COMMAND(ca, NOFLAGS) /* cancel command mode */
@@ -292,6 +305,8 @@ COMMAND(cm, NOLOCATOR) /* enter command mode */
 END
 
 COMMAND(cr, NOFLAGS) /* cursor right */
+   if (!haslines && !insertline(b, 0))
+      FAIL;
    if (p.c >= SIZE_MAX - 1)
       ERROR("End of line");
    v->p.c++;
@@ -612,6 +627,10 @@ COMMAND(n, MARK) /* move to beginning of next line */
    v->p = pos(p.l + 1, 0);
 END
 
+COMMAND(ni, NOLOCATOR) /* regular indent */
+   v->ai = false;
+END
+
 COMMAND(p, MARK) /* move to beginning of previous line */
    if (!haslines || !p.l)
       ERROR("End of file");
@@ -736,6 +755,15 @@ COMMAND(s, MARK | CLEARSBLOCK) /* split line */
     (void)cols;
 
     colno lm = v->lm == NONE? 0 : v->lm;
+    if (v->ai && b->n && v->p.l){
+       const LINE *l = &b->l[v->p.l];
+       for (size_t i = 0; i < l->n; i++){
+          if (!iswspace(l->s[i])){
+             lm = i;
+             break;
+          }
+       }
+    }
     size_t ln = b->l[p.l].n;
     size_t n = p.c >= ln? 0 : ln - p.c;
     if (!insertline(v->b, p.l + 1)
@@ -1034,7 +1062,9 @@ END
 static CMD cmdtab[] ={
     /* nm   argtype         req'd  func */
     {L"A",  ARG_STRING,     false, cmd_a},
+    {L"AI", ARG_NONE,       false, cmd_ai},
     {L"B",  ARG_NONE,       true,  cmd_b},
+    {L"BT", ARG_NONE,       true,  cmd_bt},
     {L"BE", ARG_NONE,       true,  cmd_be},
     {L"BF", ARG_STRING,     false, cmd_bf},
     {L"BM", ARG_NUMBER,     true,  cmd_bm},
@@ -1076,6 +1106,7 @@ static CMD cmdtab[] ={
     {L"M",  ARG_NUMBER,     true,  cmd_m},
     {L"MC", ARG_EXCHANGE,   true,  cmd_mc},
     {L"N",  ARG_NONE,       true,  cmd_n},
+    {L"NI", ARG_NONE,       true,  cmd_ni},
     {L"P",  ARG_NONE,       true,  cmd_p},
     {L"PD", ARG_NONE,       true,  cmd_pd},
     {L"PH", ARG_NUMBER,     true,  cmd_ph},
