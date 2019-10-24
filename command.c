@@ -396,19 +396,14 @@ END
 COMMAND(dp, MARK) /* delete previous */
    if (!v->p.c)
       ERROR("Beginning of line");
-   bool cr = false;
-   if (!iswspace(charat(b, v->p))){
-      cr = true;
-      cmd_cl(e, v, a);
+
+   while (v->p.c && iswspace(charat(b, pos(v->p.l, v->p.c - 1))) && cmd_dl(e, v, a))
+      ;
+
+   if (v->p.c && !iswspace(charat(b, pos(v->p.l, v->p.c - 1)))){
+      while (v->p.c && !iswspace(charat(b, pos(v->p.l, v->p.c - 1))) && cmd_dl(e, v, a))
+         ;
    }
-
-   while (iswspace(charat(b, v->p)) && cmd_dc(e, v, a) && cmd_cl(e, v, a))
-      ;
-   while (!iswspace(charat(b, v->p)) && cmd_dc(e, v, a) && cmd_cl(e, v, a))
-      ;
-
-   if (cr)
-      cmd_cr(e, v, a);
 END
 
 COMMAND(dw, MARK) /* delete to end of current word */
