@@ -91,6 +91,7 @@ static MODE docmodetab ={
         {{OK,           CTRL(L'E')},       cmd_ep, {0}},
         {{OK,           CTRL(L'F')},       cmd_fc, {0}},
         {{OK,           CTRL(L'G')},       cmd_rp, {0}},
+        {{OK,           CTRL(L'K')},       cmd_bb, {0}},
         {{OK,           CTRL(L'L')},       cmd_rd, {0}},
         {{OK,           CTRL(L'N')},       cmd_j,  {0}},
         {{OK,           CTRL(L'O')},       cmd_dw, {0}},

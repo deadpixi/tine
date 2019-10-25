@@ -226,6 +226,17 @@ COMMAND(b, MARK | NOLOCATOR) /* move to bottom of file */
    v->p = pos(b->n? b->n - 1 : 0, 0);
 END
 
+COMMAND(bb, NOLOCATOR) /* smart mark of block */
+   if (v->bs == NONE)
+      v->bs = p.l;
+   else if (v->be == NONE)
+      v->be = p.l;
+   else{
+      v->be = NONE;
+      v->bs = p.l;
+   }
+END
+
 COMMAND(be, NOLOCATOR) /* block end at cursor line */
    v->be = p.l;
 END

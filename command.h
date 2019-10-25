@@ -34,6 +34,7 @@ bool call(const CMD *c, EDITOR *e, VIEW *v, const ARG *a);
 bool cmd_a(EDITOR *e, VIEW *v, const ARG *a); /* insert line after current */
 bool cmd_ai(EDITOR *e, VIEW *v, const ARG *a); /* enable auto-indent */
 bool cmd_b(EDITOR *e, VIEW *v, const ARG *a); /* move to bottom of file */
+bool cmd_bb(EDITOR *e, VIEW *v, const ARG *a); /* smart mark of block */
 bool cmd_be(EDITOR *e, VIEW *v, const ARG *a); /* block end at cursor line */
 bool cmd_bf(EDITOR *e, VIEW *v, const ARG *a); /* backwards find */
 bool cmd_bm(EDITOR *e, VIEW *v, const ARG *a); /* set bookmark */

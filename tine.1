@@ -90,7 +90,8 @@ The column number of the file in which the cursor is positioned.
 If no block is defined
 .Po
 see the
-.Ic BS
+.Ic BB ","
+.Ic BS ","
 and
 .Ic BE
 extended commands
@@ -301,6 +302,9 @@ Moves to the top of the screen or, if there, to the bottom.
 Flips the case of the character under the cursor.
 .It Ctrl-G
 Repeats the last extended mode command.
+.It Ctrl-K
+Sets a block mark.
+Executing this command twice will mark a block without needing to resort to extended commands.
 .It Ctrl-L
 Inserts a copy of the last deleted line.
 .It Ctrl-N
@@ -342,7 +346,9 @@ Extended mode commands can be entered while editing by pressing
 and then entering the command on the command line
 .Pq "which temporarily replaces the status line on the display" "."
 .Pp
-Most of the immediate mode commands above can be used when editing an extended command.
+Most
+.Pq "but not all"
+of the immediate mode commands above can be used when editing an extended command.
 Pressing
 .Em Enter
 will execute the command line and return to immediate mode,
@@ -425,6 +431,10 @@ Enable auto-indent mode.
 .It "B"
 .Dq "Bottom"
 Moves to the bottom of the file.
+.It "BB"
+.Dq "Block Both"
+Sets the current line to the beginning or end of the block,
+as appropriate.
 .It "BE"
 .Dq "Block End"
 Specifies that the block should end at the current line.
