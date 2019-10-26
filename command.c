@@ -472,7 +472,7 @@ COMMAND(f, MARK | SETSHILITE | NOLOCATOR) /* find forward */
 END
 
 COMMAND(fb, MARK | NEEDSBLOCK | CLEARSBLOCK) /* filter block through command */
-   /* FIXME - we should two two pipes and a select instead of a temp file */
+   /* FIXME - we should do two pipes and a select instead of a temp file */
    POS wp = pos(v->bs, 0);
    char tfn[] = "/tmp/tineXXXXXX";
    int tfd = mkstemp(tfn);
