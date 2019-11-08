@@ -449,7 +449,7 @@ COMMAND(ep, MARK | NOLOCATOR) /* go to beginning or end of page */
    if (v->tos.l + lines - 1 >= b->n)
        n = b->n - 1;
    LINE *l = &b->l[n];
-   if (p.l != v->tos.l || p.c > 0)
+   if (p.l != v->tos.l || p.c > v->tos.c)
        v->p = v->tos;
    else
        v->p = pos(n, l->n);
