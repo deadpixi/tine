@@ -839,11 +839,12 @@ COMMAND(sh, NOLOCATOR) /* show information */
 
     wattron(w, A_BOLD);
     werase(w);
-    mvwprintw(w, 0, 0, "Editing file    %s", basename(e->name));
-    mvwprintw(w, 1, 0, "Line count      %zu", v->b->n);
-    mvwprintw(w, 2, 0, "Tab distance    %zu", v->ts);
-    mvwprintw(w, 3, 0, "Page height     %zu", v->ph);
-    mvwprintw(w, 4, 0, "Left margin     %zu", v->lm == NONE? 1 : v->lm + 1);
+    mvwprintw(w, 0, 0, "Editing file    %s",     basename(e->name));
+    mvwprintw(w, 1, 0, "In directory    %-.61s", dirname(e->name));
+    mvwprintw(w, 2, 0, "Line count      %zu",    v->b->n);
+    mvwprintw(w, 3, 0, "Tab distance    %zu",    v->ts);
+    mvwprintw(w, 4, 0, "Page height     %zu",    v->ph);
+    mvwprintw(w, 5, 0, "Left margin     %zu",    v->lm == NONE? 1 : v->lm + 1);
     if (v->rm == NONE)
         mvwprintw(w, 5, 0, "Right margin    Not set");
     else
