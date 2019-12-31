@@ -168,7 +168,7 @@ main(int argc, char **argv)
             break;
 
           default:
-            quit("usage: tine [-n] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+            quit("usage: tine [-tn] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
             break;
        }
     }
