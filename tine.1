@@ -7,6 +7,7 @@
 .Sh SYNOPSIS
 .Nm
 .Op Fl n
+.Op Fl t
 .Ar
 .Sh DESCRIPTION
 .Nm
@@ -158,6 +159,15 @@ the left margin is displayed as
 .Pp
 If an error occurs, the contents of the status line are replaced with an error message
 until the next keystroke.
+.Pp
+By default,
+the status line appears at the bottom of the display.
+By starting
+.Nm
+with the
+.Fl t
+flag,
+the status line will appear at the top.
 .Ss "Word Wrap and Margins"
 .Nm
 maintains a left and right margin,

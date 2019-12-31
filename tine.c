@@ -37,9 +37,9 @@ setupcommand(WINDOW *w, int i)
 }
 
 static void
-initializescreen(void)
+initializescreen(int i)
 {
-    ripoffline(-1, setupcommand);
+    ripoffline(i, setupcommand);
     if (!initscr())
         quit("could not initialize screen", EXIT_FAILURE);
     raw();
@@ -156,13 +156,17 @@ main(int argc, char **argv)
 {
     setlocale(LC_ALL, "");
 
-    int o = 0;
+    int o = 0, toporbot = -1;
     bool runrc = true;
-    while ((o = getopt(argc, argv, "n")) != -1){
+    while ((o = getopt(argc, argv, "tn")) != -1){
        switch (o){
           case 'n':
             runrc = false;
             break;
+          case 't':
+            toporbot = 1;
+            break;
+
           default:
             quit("usage: tine [-n] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
             break;
@@ -172,9 +176,9 @@ main(int argc, char **argv)
     argv += optind;
 
     if (argc < 1)
-        quit("usage: tine [-n] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+        quit("usage: tine [-nt] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
 
-    initializescreen();
+    initializescreen(toporbot);
     if ((editor = openeditor(argv[0], stdscr, cmdwin)) == NULL)
         return fputs("out of memory", stderr), EXIT_FAILURE;
     loadfile(argv[0]);
