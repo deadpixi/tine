@@ -67,10 +67,12 @@ docstatus(EDITOR *e, VIEW *v)
     else{
         char *fn = ellipsize(basename(e->name), 12, false);
         snprintf(buf, cols,
-         "%sFile=%-15s Line=%-5zu Col=%-5zu Block=%s%s %sTabs=%-2zu %sMargins=%s-%s",
+         "%sFile=%-15s Line=%zu/%zu (%d%%) Col=%-5zu Block=%s%s %sTabs=%-2zu %sMargins=%s-%s",
          v->b->dirty? "*" : " ",
          fn? fn : basename(e->name),
-         v->p.l + 1, v->p.c + 1,
+         v->p.l + 1, v->b->n,
+         (int)(100 * (((float)(v->p.l + 1)) / ((float)v->b->n))),
+         v->p.c + 1,
          v->bs == NONE? "?" : "S",
          v->be == NONE? "?" : "E",
          v->et? "*" : " ",
