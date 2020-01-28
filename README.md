@@ -20,7 +20,7 @@ MetaComCo, or anyone else.)
 tine is more than just an implementation of ED's extended command language,
 or a set of key-bindings on top of some other editor.
 tine attempts to be faithful to ED's somewhat unusual handling of whitespace and tabs,
-it's rather anachronistic cursor position handling (in some ways ED feels more like a
+its rather anachronistic cursor position handling (in some ways ED feels more like a
 typewriter than a display editor), its simplicity, and its general quirkiness.
 
 In other words, tine tries to function as similarly to ED as possible,
