@@ -206,13 +206,15 @@ gettag(const BUFFER *b, POS p)
 void
 redisplay(VIEW *v)
 {
+    /* FIXME - this is a mess */
     reframe(v);
 
     size_t lines, cols, y = 0, x = 0;
     getmaxyx(v->w, lines, cols);
 
     werase(v->w);
-    for (size_t l = 0; l < lines && v->tos.l + l < v->b->n; l++){
+    size_t l = 0;
+    for (l = 0; l < lines && v->tos.l + l < v->b->n; l++){
         size_t c = 0, i = 0;
         while (c < cols){
             wattrset(v->w, gettag(v->b, pos(v->tos.l + l, v->tos.c + i)));
@@ -242,6 +244,9 @@ redisplay(VIEW *v)
             i++;
         }
     }
+    while (l < lines)
+       mvwhline(v->w, l++, 0, ACS_CKBOARD, cols);
+
     wmove(v->w, y, x);
     wrefresh(v->w);
 }
