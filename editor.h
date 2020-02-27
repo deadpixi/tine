@@ -16,7 +16,7 @@ struct VIEW{
     MODE *m;
     lineno bs, be;
     void (*statuscb)(EDITOR *e, VIEW *v);
-    bool ex, uc, delay, et, q, ai;
+    bool ex, uc, delay, et, q, ai, sm;
     size_t ph, ts, lm, rm;
     wchar_t *dl;
     size_t dln;

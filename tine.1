@@ -612,6 +612,13 @@ this does not clear the block.
 Insert the contents of file
 .Ar s
 at the current cursor position.
+.It "IM"
+.Dq "Ignore Match"
+Disable
+.Dq "show matching brace"
+mode; see the
+.Ic "MS"
+command for details.
 .It "J"
 .Dq "Join"
 Join the current line and the next.
@@ -642,6 +649,17 @@ In this case,
 and
 .Ar t
 must be single-character strings.
+.It "MS"
+.Dq "Match Show"
+Enable
+.Dq "show matching brace"
+mode.
+In this mode,
+when typing a brace character,
+the cursor will briefly move to the matching brace character if available,
+similar to if the
+.Ic "SB"
+command had been invoked.
 .It "N"
 .Dq "Next line"
 Move to the beginning of the next line.

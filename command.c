@@ -599,6 +599,10 @@ COMMAND(if, MARK | CLEARSBLOCK) /* insert file */
     RETURN(r);
 END
 
+COMMAND(im, NOLOCATOR) /* ignore (don't show) matching braces */
+   v->sm = false;
+END
+
 COMMAND(j, MARK | CLEARSBLOCK) /* join this line and next */
     if (b->n < 2 || p.l >= b->n - 1)
         ERROR("End of file");
@@ -625,6 +629,10 @@ COMMAND(mc, NOLOCATOR) /* remap control key */
    if (!iswcntrl(c1) || !iswcntrl(c2) || c1 >= CTRL_MAX || c2 >= CTRL_MAX)
       ERROR("Invalid character specification");
    e->ctrlmap[c1] = c2;
+END
+
+COMMAND(ms, NOLOCATOR) /* show matching braces */
+   v->sm = true;
 END
 
 COMMAND(n, MARK) /* move to beginning of next line */
@@ -874,6 +882,19 @@ COMMAND(sl, NOLOCATOR) /* set left margin */
     v->lm = a->n1 > 0? a->n1 - 1 : p.c;
 END
 
+COMMAND(hb, MARK | NOLOCATOR)
+   if (!cmd_ty(e, v, a))
+      RETURN(false);
+
+   POS op = v->p;
+   cmd_cl(e, v, a);
+   if (cmd_sm(e, v, a)){
+      redisplay(&e->docview);
+      napms(200);
+   }
+   v->p = op;
+END
+
 COMMAND(sm, MARK | NOLOCATOR) /* show matching brace */
    wint_t s = charat(b, p), m = 0;
    int c = 1;
@@ -1108,10 +1129,12 @@ static CMD cmdtab[] ={
     {L"I",  ARG_STRING,     false, cmd_i},
     {L"IB", ARG_NONE,       true,  cmd_ib},
     {L"IF", ARG_STRING,     true,  cmd_if},
+    {L"IM", ARG_NONE,       true,  cmd_im},
     {L"J",  ARG_NONE,       true,  cmd_j},
     {L"LC", ARG_NONE,       true,  cmd_lc},
     {L"M",  ARG_NUMBER,     true,  cmd_m},
     {L"MC", ARG_EXCHANGE,   true,  cmd_mc},
+    {L"MS", ARG_NONE,       true,  cmd_ms},
     {L"N",  ARG_NONE,       true,  cmd_n},
     {L"NI", ARG_NONE,       true,  cmd_ni},
     {L"P",  ARG_NONE,       true,  cmd_p},

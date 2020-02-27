@@ -72,13 +72,16 @@ bool cmd_fb(EDITOR *e, VIEW *v, const ARG *a); /* filter block */
 bool cmd_fc(EDITOR *e, VIEW *v, const ARG *a); /* flip case */
 bool cmd_gb(EDITOR *e, VIEW *v, const ARG *a); /* go back */
 bool cmd_gm(EDITOR *e, VIEW *v, const ARG *a); /* go to bookmark */
+bool cmd_hb(EDITOR *e, VIEW *v, const ARG *a); /* handle bracket */
 bool cmd_i(EDITOR *e, VIEW *v, const ARG *a); /* insert line before */
 bool cmd_ib(EDITOR *e, VIEW *v, const ARG *a); /* insert block */
 bool cmd_if(EDITOR *e, VIEW *v, const ARG *a); /* insert file */
+bool cmd_im(EDITOR *e, VIEW *v, const ARG *a); /* ignore (don't show) matching braces */
 bool cmd_j(EDITOR *e, VIEW *v, const ARG *a); /* join this line and next */
 bool cmd_lc(EDITOR *e, VIEW *v, const ARG *a); /* case-sensitive searching */
 bool cmd_m(EDITOR *e, VIEW *v, const ARG *a); /* move to line */
 bool cmd_mc(EDITOR *e, VIEW *v, const ARG *a); /* remap control key */
+bool cmd_ms(EDITOR *e, VIEW *v, const ARG *a); /* show matches */
 bool cmd_n(EDITOR *e, VIEW *v, const ARG *a); /* move to beginning of next line */
 bool cmd_ni(EDITOR *e, VIEW *v, const ARG *a); /* disable autoindent */
 bool cmd_p(EDITOR *e, VIEW *v, const ARG *a); /* move to beginning of previous line */

@@ -106,6 +106,12 @@ static MODE docmodetab ={
         {{OK,           CTRL(L'V')},       cmd_vw, {0}},
         {{OK,           CTRL(L'Y')},       cmd_el, {0}},
         {{OK,           CTRL(L'Z')},       cmd_gb, {0}},
+        {{OK,           L'['},             cmd_hb, {0}},
+        {{OK,           L']'},             cmd_hb, {0}},
+        {{OK,           L'{'},             cmd_hb, {0}},
+        {{OK,           L'}'},             cmd_hb, {0}},
+        {{OK,           L'('},             cmd_hb, {0}},
+        {{OK,           L')'},             cmd_hb, {0}},
         {{KEY_CODE_YES, 0},                cmd_uk, {0}},
         {{OK,           0},                NULL,   {0}}
     }
