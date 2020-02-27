@@ -888,6 +888,17 @@ COMMAND(sl, NOLOCATOR) /* set left margin */
     v->lm = a->n1 > 0? a->n1 - 1 : p.c;
 END
 
+static inline bool
+onscreen(const VIEW *v, POS p)
+{
+   int y, x;
+   getmaxyx(v->w, y, x);
+   return p.l >= v->tos.l
+       && p.l < v->tos.l + y
+       && p.c >= v->tos.c
+       && p.c < v->tos.c + x;
+}
+
 COMMAND(hb, MARK | NOLOCATOR)
    if (!cmd_ty(e, v, a))
       RETURN(false);
@@ -895,8 +906,10 @@ COMMAND(hb, MARK | NOLOCATOR)
    POS op = v->p;
    cmd_cl(e, v, a);
    if (cmd_sm(e, v, a)){
-      redisplay(&e->docview);
-      napms(v->sd);
+      if (onscreen(v, v->p)){
+         redisplay(&e->docview);
+         napms(v->sd);
+      }
    }
    v->p = op;
 END
