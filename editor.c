@@ -294,9 +294,3 @@ fixcursor(EDITOR *e)
     fixviewcursor(&e->docview);
     fixviewcursor(&e->cmdview);
 }
-
-static bool
-pbefore(POS p1, POS p2)
-{
-    return p1.l < p2.l || (p1.l == p2.l && p1.c < p2.c);
-}
