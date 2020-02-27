@@ -7,6 +7,7 @@
 .Sh SYNOPSIS
 .Nm
 .Op Fl n
+.Op Fl r
 .Op Fl t
 .Ar
 .Sh DESCRIPTION
@@ -171,6 +172,16 @@ with the
 .Fl t
 flag,
 the status line will appear at the top.
+.Pp
+By default,
+the file area is displayed in normal video and the status line
+appears in reverse video.
+By starting
+.Nm
+with the
+.Fl r
+flag,
+this is reversed.
 .Ss "Word Wrap and Margins"
 .Nm
 maintains a left and right margin,

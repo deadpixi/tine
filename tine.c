@@ -13,6 +13,7 @@
 
 static EDITOR *editor;
 static WINDOW *cmdwin;
+static bool reversed = false;
 
 static int
 quit(const char *m, int rc)
@@ -31,7 +32,8 @@ setupcommand(WINDOW *w, int i)
 {
     (void)i;
     cmdwin = w;
-    wbkgdset(w, A_REVERSE);
+    if (!reversed)
+       wbkgdset(w, A_REVERSE);
     werase(w);
     return OK;
 }
@@ -45,6 +47,8 @@ initializescreen(int i)
     raw();
     noecho();
     nonl();
+    if (reversed)
+      wbkgdset(stdscr, A_REVERSE);
     keypad(stdscr, TRUE);
     keypad(cmdwin, TRUE);
     intrflush(stdscr, FALSE);
@@ -158,7 +162,7 @@ main(int argc, char **argv)
 
     int o = 0, toporbot = -1;
     bool runrc = true;
-    while ((o = getopt(argc, argv, "tn")) != -1){
+    while ((o = getopt(argc, argv, "rtn")) != -1){
        switch (o){
           case 'n':
             runrc = false;
@@ -166,9 +170,12 @@ main(int argc, char **argv)
           case 't':
             toporbot = 1;
             break;
+          case 'r':
+            reversed = true;
+            break;
 
           default:
-            quit("usage: tine [-tn] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+            quit("usage: tine [-rtn] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
             break;
        }
     }
