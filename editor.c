@@ -110,6 +110,7 @@ openeditor(const char *name, WINDOW *docwin, WINDOW *cmdwin)
         return NULL;
     }
 
+    e->docview.se = true;
     e->lc = pos(NONE, NONE);
     e->focusview = &e->docview;
     strncpy(e->name, name, FILENAME_MAX);
@@ -244,7 +245,7 @@ redisplay(VIEW *v)
             i++;
         }
     }
-    while (l < lines)
+    while (l < lines && v->se)
        mvwhline(v->w, l++, 0, ACS_CKBOARD, cols);
 
     wmove(v->w, y, x);
