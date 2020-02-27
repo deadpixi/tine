@@ -17,7 +17,7 @@ struct VIEW{
     lineno bs, be;
     void (*statuscb)(EDITOR *e, VIEW *v);
     bool ex, uc, delay, et, q, ai, sm, se;
-    size_t ph, ts, lm, rm;
+    size_t ph, ts, lm, rm, sd;
     wchar_t *dl;
     size_t dln;
 };

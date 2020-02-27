@@ -10,6 +10,7 @@
 
 #define DEFAULT_TS 3
 #define DEFAULT_PH 12
+#define DEFAULT_SD 200
 static bool
 initview(VIEW *v, WINDOW *w, MODE *m, void (*statuscb)(EDITOR *e, VIEW *v))
 {
@@ -23,6 +24,7 @@ initview(VIEW *v, WINDOW *w, MODE *m, void (*statuscb)(EDITOR *e, VIEW *v))
     v->lm = 0;
     v->ts = DEFAULT_TS;
     v->ph = DEFAULT_PH;
+    v->sd = DEFAULT_SD;
     v->statuscb = statuscb;
     v->delay = true;
     return true;

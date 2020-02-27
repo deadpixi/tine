@@ -100,6 +100,7 @@ bool cmd_rs(EDITOR *e, VIEW *v, const ARG *a); /* run extended command */
 bool cmd_s(EDITOR *e, VIEW *v, const ARG *a); /* split line */
 bool cmd_sa(EDITOR *e, VIEW *v, const ARG *a); /* save text to file */
 bool cmd_sb(EDITOR *e, VIEW *v, const ARG *a); /* show block on screen */
+bool cmd_sd(EDITOR *e, VIEW *v, const ARG *a); /* set show delay */
 bool cmd_se(EDITOR *e, VIEW *v, const ARG *a); /* split line after moving to end */
 bool cmd_sf(EDITOR *e, VIEW *v, const ARG *a); /* set function key */
 bool cmd_sh(EDITOR *e, VIEW *v, const ARG *a); /* show information */

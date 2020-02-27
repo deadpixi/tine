@@ -816,6 +816,12 @@ COMMAND(sb, NOLOCATOR | MARK) /* show block on screen */
     v->p.l = v->bs;
 END
 
+COMMAND(sd, NOLOCATOR) /* set show matching bracket delay */
+   if (a->n1 > 2000)
+      ERROR("Invalid delay value");
+   v->sd = a->n1;
+END
+
 COMMAND(se, CLEARSBLOCK | MARK) /* split line after move to end */
     RETURN(cmd_ce(e, v, a) && cmd_s(e, v, a));
 END
@@ -890,7 +896,7 @@ COMMAND(hb, MARK | NOLOCATOR)
    cmd_cl(e, v, a);
    if (cmd_sm(e, v, a)){
       redisplay(&e->docview);
-      napms(200);
+      napms(v->sd);
    }
    v->p = op;
 END
@@ -1148,6 +1154,7 @@ static CMD cmdtab[] ={
     {L"SA", ARG_STRING,     false, cmd_sa},
     {L"S",  ARG_NONE,       true,  cmd_s},
     {L"SB", ARG_NONE,       true,  cmd_sb},
+    {L"SD", ARG_NUMBER,     true,  cmd_sd},
     {L"SF", ARG_EXCHANGE,   true,  cmd_sf},
     {L"SH", ARG_NONE,       true,  cmd_sh},
     {L"SL", ARG_NUMBER,     false, cmd_sl},
