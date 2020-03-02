@@ -211,7 +211,7 @@ enum{
 
 #define RETURN(x) do{rc = (x); goto endfunc;}while(false)
 #define ERROR(s) RETURN(error(e, s))
-#define SUCCEED RETURN(true)
+#define SUCCEED do{error(e, ""); RETURN(true);}while(false)
 #define FAIL RETURN(false)
 
 COMMAND(a, MARK | CLEARSBLOCK) /* insert line after current */
@@ -912,6 +912,7 @@ COMMAND(hb, MARK | NOLOCATOR)
       }
    }
    v->p = op;
+   SUCCEED;
 END
 
 COMMAND(sm, MARK | NOLOCATOR) /* show matching brace */
