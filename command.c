@@ -610,12 +610,26 @@ COMMAND(im, NOLOCATOR) /* ignore (don't show) matching braces */
    v->sm = false;
 END
 
+static bool
+squeezespace(BUFFER *b, POS p)
+{
+   size_t n = 0;
+   POS start = p;
+   while (!ateol(b, p) && iswspace(charat(b, p)) && iswspace(charat(b, pos(p.l, p.c + 1)))){
+      p.c++;
+      n++;
+   }
+   deletetext(b, start, n);
+   return true;
+}
+
 COMMAND(j, MARK | CLEARSBLOCK) /* join this line and next */
     if (b->n < 2 || p.l >= b->n - 1)
         ERROR("End of file");
     LINE *l1 = &b->l[p.l];
     LINE *l2 = &b->l[p.l + 1];
-    RETURN(inserttext(b, pos(p.l, l1->n), l2->s, l2->n) && deleteline(b, p.l + 1));
+    POS np = pos(p.l, l1->n);
+    RETURN(inserttext(b, pos(p.l, l1->n), l2->s, l2->n) && deleteline(b, p.l + 1) && squeezespace(b, np));
 END
 
 COMMAND(lc, NOLOCATOR) /* case-sensitive searching */
