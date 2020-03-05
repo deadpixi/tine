@@ -4,6 +4,8 @@
 #include "structs.h"
 #include "buffer.h"
 
+#define SLACK 255
+
 typedef enum{MA, PO, IL, DL, IT, DT} action;
 struct JOURNAL{
     JOURNAL *prev;
@@ -89,12 +91,23 @@ closebuffer(BUFFER *b)
 }
 
 static bool
+ensurelines(BUFFER *b, size_t n)
+{
+   if (b->a >= n)
+      return true;
+   LINE *l = realloc(b->l, (n + SLACK) * sizeof(LINE));
+   if (!l)
+      return false;
+   b->l = l;
+   b->a = n + SLACK;
+   return true;
+}
+
+static bool
 doinsertline(BUFFER *b, lineno l)
 {
-    LINE *nl = realloc(b->l, (b->n + 1) * sizeof(LINE));
-    if (!nl)
+    if (!ensurelines(b, b->n + 1))
         return false;
-    b->l = nl;
 
     memmove(b->l + l + 1, b->l + l, (b->n - l) * sizeof(LINE));
     memset(b->l + l, 0, sizeof(LINE));
@@ -113,6 +126,19 @@ dodeleteline(BUFFER *b, lineno l)
 }
 
 static bool
+ensureline(LINE *l, size_t n)
+{
+   if (l->a >= n)
+      return true;
+   wchar_t *s = realloc(l->s, (n + SLACK) * sizeof(wchar_t));
+   if (!s)
+      return false;
+   l->s = s;
+   l->a = n + SLACK;
+   return true;
+}
+
+static bool
 doinserttext(BUFFER *b, POS p, const wchar_t *s, size_t n)
 {
     if (!n)
@@ -120,18 +146,14 @@ doinserttext(BUFFER *b, POS p, const wchar_t *s, size_t n)
     LINE *l = b->l + p.l;
     b->dirty = true;
     if (p.c > l->n){
-        wchar_t *ns = realloc(l->s, p.c * sizeof(wchar_t));
-        if (!ns)
+        if (!ensureline(l, p.c))
             return false;
-        l->s = ns;
         wmemset(l->s + l->n, L' ', p.c - l->n);
         l->n = p.c;
     }
 
-    wchar_t *ns = realloc(l->s, (l->n + n) * sizeof(wchar_t));
-    if (!ns)
+    if (!ensureline(l, l->n + n))
         return false;
-    l->s = ns;
     wmemmove(l->s + p.c + n, l->s + p.c, l->n - p.c);
     wmemcpy(l->s + p.c, s, n);
     l->n += n;

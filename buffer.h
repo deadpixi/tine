@@ -14,7 +14,7 @@ struct POS{
 };
 
 struct LINE{
-    size_t n;
+    size_t a, n;
     wchar_t *s;
 };
 
@@ -33,7 +33,7 @@ typedef enum{ /* note that these must be in descending order by priority */
 
 typedef uint64_t txn;
 struct BUFFER{
-    size_t n;
+    size_t a, n;
     LINE *l;
 
     bool canundo, dirty;
