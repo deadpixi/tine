@@ -419,16 +419,23 @@ END
 
 COMMAND(dw, MARK) /* delete to end of current word */
    bool r = true;
+   size_t n = 0;
+   POS start = v->p;
 
    if (ateol(v->b, v->p))
        SUCCEED;
    if (iswspace(charat(b, v->p))){
-       while (iswspace(charat(b, v->p)) && !ateol(b, v->p) && r)
-           r = deletetext(b, v->p, 1);
-   } else
-       while (!iswspace(charat(b, v->p)) && !ateol(b, v->p) && r)
-           r = deletetext(b, v->p, 1);
-   RETURN(r);
+       while (iswspace(charat(b, v->p)) && !ateol(b, v->p) && r){
+           v->p.c++;
+           n++;
+       }
+   } else while (!iswspace(charat(b, v->p)) && !ateol(b, v->p) && r){
+           v->p.c++;
+           n++;
+   }
+
+   v->p = start;
+   RETURN(deletetext(b, v->p, n));
 END
 
 COMMAND(e, MARK | NOLOCATOR) /* exchange s/t */
