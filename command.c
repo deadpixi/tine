@@ -924,6 +924,9 @@ COMMAND(hb, MARK | NOLOCATOR)
    if (!cmd_ty(e, v, a))
       RETURN(false);
 
+   if (!v->sm)
+      SUCCEED;
+
    POS op = v->p;
    cmd_cl(e, v, a);
    if (cmd_sm(e, v, a)){
