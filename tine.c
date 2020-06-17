@@ -155,6 +155,7 @@ run(void)
     }
 }
 
+#define USAGE "usage: tine [-rtn] FILE [CMDFILE|+LINE]...\n"
 int
 main(int argc, char **argv)
 {
@@ -175,7 +176,7 @@ main(int argc, char **argv)
             break;
 
           default:
-            quit("usage: tine [-rtn] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+            quit(USAGE, EXIT_FAILURE);
             break;
        }
     }
@@ -183,7 +184,7 @@ main(int argc, char **argv)
     argv += optind;
 
     if (argc < 1)
-        quit("usage: tine [-nt] FILE [CMDFILE|+LINE]...\n", EXIT_FAILURE);
+        quit(USAGE, EXIT_FAILURE);
 
     initializescreen(toporbot);
     if ((editor = openeditor(argv[0], stdscr, cmdwin)) == NULL)
