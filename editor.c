@@ -1,5 +1,5 @@
 #include <libgen.h>
-#include <ncursesw/ncurses.h>
+#include <curses.h>
 #include <stdbool.h>
 #include <string.h>
 

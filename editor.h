@@ -1,7 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <ncursesw/ncurses.h>
+#include <curses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <wchar.h>

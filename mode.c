@@ -1,4 +1,4 @@
-#include <ncursesw/ncurses.h>
+#include <curses.h>
 #include <string.h>
 
 #include "structs.h"
@@ -17,7 +17,7 @@ struct MODE{
 };
 
 #define CTRL(x) ((x) & 0x1f)
-static MODE cmdmodetab ={
+static MODE cmdmodetab[] ={
     cmd_ty,
     {
         {{KEY_CODE_YES, KEY_BACKSPACE},    cmd_dl, {0}},

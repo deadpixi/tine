@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <libgen.h>
 #include <limits.h>
-#include <ncursesw/ncurses.h>
+#include <curses.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <string.h>
