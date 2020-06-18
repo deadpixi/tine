@@ -1,10 +1,10 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <curses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <wchar.h>
+#include CURSES_INCLUDE
 
 #include "buffer.h"
 #include "mode.h"

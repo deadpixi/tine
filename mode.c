@@ -1,5 +1,6 @@
 #include <curses.h>
 #include <string.h>
+#include CURSES_INCLUDE
 
 #include "structs.h"
 #include "mode.h"
@@ -17,7 +18,7 @@ struct MODE{
 };
 
 #define CTRL(x) ((x) & 0x1f)
-static MODE cmdmodetab[] ={
+static MODE cmdmodetab ={
     cmd_ty,
     {
         {{KEY_CODE_YES, KEY_BACKSPACE},    cmd_dl, {0}},

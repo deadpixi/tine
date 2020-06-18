@@ -1,7 +1,7 @@
 #include <libgen.h>
-#include <curses.h>
 #include <stdbool.h>
 #include <string.h>
+#include CURSES_INCLUDE
 
 #include "structs.h"
 #include "editor.h"

@@ -1,7 +1,6 @@
 #include <errno.h>
 #include <libgen.h>
 #include <limits.h>
-#include <curses.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <string.h>
@@ -11,6 +10,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include CURSES_INCLUDE
 
 #include "structs.h"
 #include "buffer.h"

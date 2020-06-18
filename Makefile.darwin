@@ -1,8 +1,8 @@
 CC        := c99
 STANDARDS := -D_POSIX_C_SOURCE=200908L -D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED
-CURSES    := -DCURSES_INCLUDE="<ncursesw/ncurses.h>"
+CURSES    := -DCURSES_INCLUDE="<curses.h>"
 CFLAGS    := $(STANDARDS) $(CURSES) -Os
-LDFLAGS   := -lncursesw
+LDFLAGS   := -lcurses
 DESTDIR   ?= /usr/local
 
 all: tine
