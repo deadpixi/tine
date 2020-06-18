@@ -12,9 +12,10 @@ struct MAP{
     ARG a;
 };
 
+#define MAP_MAX 100
 struct MODE{
     callback defcb;
-    MAP map[];
+    MAP map[MAP_MAX];
 };
 
 #define CTRL(x) ((x) & 0x1f)
