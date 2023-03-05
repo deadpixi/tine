@@ -8,6 +8,13 @@
 #include "mode.h"
 #include "util.h"
 
+/* The character used to fill an empty background.
+ * A good choice might be ACS_CKBOARD.
+ */
+#ifndef EMPTY_BACKGROUND
+#define EMPTY_BACKGROUND ' '
+#endif
+
 #define DEFAULT_TS 3
 #define DEFAULT_PH 12
 #define DEFAULT_SD 200
@@ -248,7 +255,7 @@ redisplay(VIEW *v)
         }
     }
     while (l < lines && v->se)
-       mvwhline(v->w, l++, 0, ACS_CKBOARD, cols);
+       mvwhline(v->w, l++, 0, ' ', cols);
 
     wmove(v->w, y, x);
     wrefresh(v->w);
