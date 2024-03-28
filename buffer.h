@@ -44,7 +44,7 @@ struct BUFFER{
     TAG tags[TAG_MAX];
 };
 
-BUFFER *openbuffer();
+BUFFER *openbuffer(void);
 void closebuffer(BUFFER *b);
 
 bool insertline(BUFFER *b, lineno l);
